@@ -4,7 +4,7 @@
    "port": 3306,
    "username": "root",
    "password": "",
-   "database": "smartattendacne",
+   "database": "smart_attendance",
    "synchronize": false,
    "logging": false,
    "entities": ["src/entity/**/*.ts"],
