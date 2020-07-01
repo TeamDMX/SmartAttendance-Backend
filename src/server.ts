@@ -23,6 +23,7 @@ Controllers
 =====================================================================================
 */
 
+import { CourseController } from "./controller/CourseController"
 
 /* 
 =====================================================================================
@@ -100,6 +101,31 @@ Routes
 =====================================================================================
 */
 
+// Routes:  Course Routes
+app.route("/api/courses")
+   .post((req, res) => {
+      CourseController.save(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .get((req, res) => {
+      CourseController.get(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .put((req, res) => {
+      CourseController.update(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .delete((req, res) => {
+      CourseController.delete(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
 
 // Express.js: Start the server
 app.listen(process.env.PORT, () => console.log(`Server is running on ${process.env.PORT}!`));
