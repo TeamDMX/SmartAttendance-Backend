@@ -2,8 +2,8 @@ import {
   Column,
   Entity,
   Index,
-  JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Course } from "./Course";
@@ -15,8 +15,8 @@ export class Lecturer {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
   id: number;
 
-  @Column("varchar", { name: "code", nullable: true, unique: true, length: 10 })
-  code: string | null;
+  @Column("varchar", { name: "code", unique: true, length: 10 })
+  code: string;
 
   @Column("varchar", { name: "full_name", length: 100 })
   fullName: string;
@@ -24,12 +24,6 @@ export class Lecturer {
   @ManyToMany(() => Course, (course) => course.lecturers)
   courses: Course[];
 
-  @ManyToMany(() => User, (user) => user.lecturers)
-  @JoinTable({
-    name: "lecturer_user",
-    joinColumns: [{ name: "lecturer_id", referencedColumnName: "id" }],
-    inverseJoinColumns: [{ name: "user_id", referencedColumnName: "id" }],
-    schema: "smart_attendance",
-  })
+  @OneToMany(() => User, (user) => user.lecturer)
   users: User[];
 }

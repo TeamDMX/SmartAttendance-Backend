@@ -24,10 +24,9 @@ export class Attendance {
 
   @Column("datetime", {
     name: "marked_datetime",
-    nullable: true,
     default: () => "CURRENT_TIMESTAMP",
   })
-  markedDatetime: Date | null;
+  markedDatetime: Date;
 
   @ManyToOne(() => Lecture, (lecture) => lecture.attendances, {
     onDelete: "NO ACTION",

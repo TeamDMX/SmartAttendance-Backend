@@ -2,7 +2,6 @@ import {
   Column,
   Entity,
   Index,
-  JoinTable,
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -18,24 +17,14 @@ export class Student {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
   id: number;
 
-  @Column("varchar", {
-    name: "reg_number",
-    nullable: true,
-    unique: true,
-    length: 12,
-  })
-  regNumber: string | null;
+  @Column("varchar", { name: "reg_number", unique: true, length: 12 })
+  regNumber: string;
 
   @Column("varchar", { name: "full_name", length: 100 })
   fullName: string;
 
-  @Column("varchar", {
-    name: "index_number",
-    nullable: true,
-    unique: true,
-    length: 12,
-  })
-  indexNumber: string | null;
+  @Column("varchar", { name: "index_number", unique: true, length: 12 })
+  indexNumber: string;
 
   @OneToMany(() => Attendance, (attendance) => attendance.student)
   attendances: Attendance[];
@@ -43,12 +32,6 @@ export class Student {
   @ManyToMany(() => Course, (course) => course.students)
   courses: Course[];
 
-  @ManyToMany(() => User, (user) => user.students)
-  @JoinTable({
-    name: "student_user",
-    joinColumns: [{ name: "student_id", referencedColumnName: "id" }],
-    inverseJoinColumns: [{ name: "user_id", referencedColumnName: "id" }],
-    schema: "smart_attendance",
-  })
+  @OneToMany(() => User, (user) => user.student)
   users: User[];
 }
