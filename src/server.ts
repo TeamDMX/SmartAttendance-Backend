@@ -25,6 +25,7 @@ Controllers
 
 import { CourseController } from "./controller/CourseController"
 import { StudentController } from "./controller/StudentController"
+import { LecturerController } from "./controller/LecturerController"
 
 /* 
 =====================================================================================
@@ -150,6 +151,32 @@ app.route("/api/students")
 
    .delete((req, res) => {
       StudentController.delete(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
+// Routes:  Lecturer Routes
+app.route("/api/lecturers")
+   .post((req, res) => {
+      LecturerController.save(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .get((req, res) => {
+      LecturerController.get(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .put((req, res) => {
+      LecturerController.update(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .delete((req, res) => {
+      LecturerController.delete(req.body.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
