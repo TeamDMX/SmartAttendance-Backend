@@ -6,6 +6,7 @@ export class CourseDao {
         return getRepository(Course)
             .createQueryBuilder("r")
             .where("r.name LIKE :keyword", { keyword: `%${keyword}%` })
+            .orWhere("r.code LIKE :keyword", { keyword: `%${keyword}%` })
             .skip(skip)
             .take(15)
             .getMany()
