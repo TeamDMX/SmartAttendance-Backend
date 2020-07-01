@@ -95,7 +95,7 @@ export class StudentController {
         // await ValidationUtil.validate("ROLE", editedRole);
 
         // check if an entry is present with the given id
-        const selectedEntry = await getRepository(StudentDao).findOne(editedEntry.id).catch(e => {
+        const selectedEntry = await getRepository(Student).findOne(editedEntry.id).catch(e => {
             console.log(e.code, e);
             throw {
                 status: false,
