@@ -210,3 +210,6 @@ app.route("/api/lecturers")
 
 // Express.js: Start the server
 app.listen(process.env.PORT, () => console.log(`Server is running on ${process.env.PORT}!`));
+
+// export app for testing
+export default app;
