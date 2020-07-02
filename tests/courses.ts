@@ -16,7 +16,7 @@ before(function (done) {
   }, 2000);
 });
 
-describe("courses: Save", () => {
+describe("courses: save", () => {
   it("should create a new course with id 1", function (done) {
     chai
       .request(app)
@@ -70,7 +70,7 @@ describe("courses: get all", () => {
   });
 });
 
-describe("courses: Delete", () => {
+describe("courses: delete", () => {
   it("should delete the course with id 1", function (done) {
     chai
       .request(app)
