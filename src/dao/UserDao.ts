@@ -17,4 +17,26 @@ export class UserDao {
             .take(15)
             .getMany()
     }
+
+    static getOne(id) {
+        return getRepository(User)
+            .createQueryBuilder("u")
+            .select([
+                "u.id, u.email, u.regDatetime"
+            ])
+            .leftJoinAndSelect("role", "r")
+            .leftJoinAndSelect("userType", "ut")
+            .leftJoinAndSelect("student", "st")
+            .leftJoinAndSelect("lecturer", "lec")
+            .where("u.id = :keyword", { id })
+            .getOne()
+            .catch(e => {
+                console.log(e.code, e);
+                throw {
+                    status: false,
+                    type: "server",
+                    msg: "Server Error!. Please check logs."
+                };
+            });
+    }
 }
