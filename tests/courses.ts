@@ -16,7 +16,7 @@ before(function (done) {
   }, 2000);
 });
 
-describe("Courses: Save", () => {
+describe("courses: Save", () => {
   it("should create a new course with id 1", function (done) {
     chai
       .request(app)
@@ -31,14 +31,14 @@ describe("Courses: Save", () => {
       })
       .end(function (err, res) {
         if (err) done(err);
-        expect(res.body.status).to.equal(true, "Response status should be true.");
+        expect(res.body.status).to.equal(true, "response status should be true.");
         done();
       });
   });
 });
 
 
-describe("Courses: GetOne", () => {
+describe("courses: get one", () => {
   it("should get the course info with id 1 as a object", function (done) {
     chai
       .request(app)
@@ -47,14 +47,14 @@ describe("Courses: GetOne", () => {
       .send()
       .end(function (err, res) {
         if (err) done(err);
-        expect(res.body.status).to.equal(true, "Response status should be true.");
-        expect(res.body.data).to.be.an("object", "Response data should be a single object");
+        expect(res.body.status).to.equal(true, "response status should be true.");
+        expect(res.body.data).to.be.an("object", "response data should be a single object");
         done();
       });
   });
 });
 
-describe("Courses: GetAll", () => {
+describe("courses: get all", () => {
   it("should get an array with course data objects", function (done) {
     chai
       .request(app)
@@ -63,14 +63,14 @@ describe("Courses: GetAll", () => {
       .send()
       .end(function (err, res) {
         if (err) done(err);
-        expect(res.body.status).to.equal(true, "Response status should be true.");
-        expect(res.body.data).to.be.an("array", "Response data should be an array of objects.");
+        expect(res.body.status).to.equal(true, "response status should be true.");
+        expect(res.body.data).to.be.an("array", "response data should be an array of objects.");
         done();
       });
   });
 });
 
-describe("Courses: Delete", () => {
+describe("courses: Delete", () => {
   it("should delete the course with id 1", function (done) {
     chai
       .request(app)
@@ -85,7 +85,7 @@ describe("Courses: Delete", () => {
       })
       .end(function (err, res) {
         if (err) done(err);
-        expect(res.body.status).to.equal(true, "Response status should be true.");
+        expect(res.body.status).to.equal(true, "response status should be true.");
         done();
       });
   });
