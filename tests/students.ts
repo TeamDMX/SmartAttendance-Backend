@@ -11,7 +11,7 @@ const ROUTE = "/api/students";
 
 // add delay until app is started
 before(function (done) {
-  setTimeout(function(){
+  setTimeout(function () {
     done();
   }, 2000);
 });
@@ -80,8 +80,6 @@ describe("students: delete", () => {
       .send({
         "data": {
           "id": "1",
-          "code": "ITC111",
-          "name": "Introduction to Programming"
         }
       })
       .end(function (err, res) {
