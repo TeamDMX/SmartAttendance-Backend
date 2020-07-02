@@ -7,7 +7,7 @@ chai.use(chaiHttp);
 const { expect } = chai;
 
 // ROUTE to send requests (path)
-const ROUTE = "/api/courses";
+const ROUTE = "/api/lecturers";
 
 // add delay until app is started
 before(function (done) {
@@ -16,8 +16,8 @@ before(function (done) {
   }, 2000);
 });
 
-describe("courses: Save", () => {
-  it("should create a new course with id 1", function (done) {
+describe("lecturers: save", () => {
+  it("should create a new lecturer with id 1", function (done) {
     chai
       .request(app)
       .post(ROUTE)
@@ -25,8 +25,8 @@ describe("courses: Save", () => {
       .send({
         "data": {
           "id": "1",
-          "code": "ITC111",
-          "name": "Introduction to Programming"
+          "code": "12345",
+          "fullName": "Dasun Dalaml",
         }
       })
       .end(function (err, res) {
@@ -38,11 +38,11 @@ describe("courses: Save", () => {
 });
 
 
-describe("courses: get one", () => {
-  it("should get the course info with id 1 as a object", function (done) {
+describe("lecturers: get one", () => {
+  it("should get the lecturer info with id 1 as a object", function (done) {
     chai
       .request(app)
-      .get("/api/courses?data[id]=1")
+      .get("/api/lecturers?data[id]=1")
       .set("content-type", "application/json; charset=utf-8")
       .send()
       .end(function (err, res) {
@@ -54,8 +54,8 @@ describe("courses: get one", () => {
   });
 });
 
-describe("courses: get all", () => {
-  it("should get an array with course data objects", function (done) {
+describe("lecturers: get all", () => {
+  it("should get an array with lecturer data objects", function (done) {
     chai
       .request(app)
       .get(ROUTE)
@@ -70,8 +70,8 @@ describe("courses: get all", () => {
   });
 });
 
-describe("courses: Delete", () => {
-  it("should delete the course with id 1", function (done) {
+describe("lecturers: delete", () => {
+  it("should delete the lecturer with id 1", function (done) {
     chai
       .request(app)
       .delete(ROUTE)
@@ -80,8 +80,7 @@ describe("courses: Delete", () => {
         "data": {
           "id": "1",
         }
-      })
-      .end(function (err, res) {
+      })      .end(function (err, res) {
         if (err) done(err);
         expect(res.body.status).to.equal(true, "response status should be true.");
         done();
