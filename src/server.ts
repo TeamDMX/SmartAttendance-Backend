@@ -183,7 +183,7 @@ app.route("/api/lecturers")
    });
 
 // Routes:  Users
-app.route("/api/lecturers")
+app.route("/api/users")
    .post((req, res) => {
       UserController.save(req.body.data)
          .then(r => res.json(r))
