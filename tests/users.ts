@@ -7,7 +7,7 @@ chai.use(chaiHttp);
 const { expect } = chai;
 
 // ROUTE to send requests (path)
-const ROUTE = "/api/students";
+const ROUTE = "/api/users";
 
 // add delay until app is started
 before(function (done) {
@@ -16,8 +16,8 @@ before(function (done) {
   }, 2000);
 });
 
-describe("students: save", () => {
-  it("should create a new student with id 99", function (done) {
+describe("users: save", () => {
+  it("should create a new user with id 99", function (done) {
     chai
       .request(app)
       .post(ROUTE)
@@ -25,9 +25,11 @@ describe("students: save", () => {
       .send({
         "data": {
           "id": "99",
-          "regNumber": "TE98765",
-          "name": "Dasun Dalaml",
-          "indexNumber": "ICT/18/811"
+          "email": "kasun@kasun.com",
+          "password": "some hash",
+          "roleId": "1",
+          "userTypeId": "1",
+          "lecturerId": "1"
         }
       })
       .end(function (err, res) {
@@ -39,14 +41,14 @@ describe("students: save", () => {
 });
 
 
-describe("students: get one", () => {
-  it("should get the student info with id 99 as a object", function (done) {
+describe("users: get one", () => {
+  it("should get the user info with id 99 as a object", function (done) {
     chai
       .request(app)
-      .get("/api/students?data[id]=99")
+      .get("/api/users?data[id]=99")
       .set("content-type", "application/json; charset=utf-8")
       .send()
-      .end(function (err, res) {
+      .end(function (err, res) {        
         if (err) done(err);
         expect(res.body.status).to.equal(true, "response status should be true.");
         expect(res.body.data).to.be.an("object", "response data should be a single object");
@@ -55,8 +57,8 @@ describe("students: get one", () => {
   });
 });
 
-describe("students: get all", () => {
-  it("should get an array with student data objects", function (done) {
+describe("users: get all", () => {
+  it("should get an array with user data objects", function (done) {
     chai
       .request(app)
       .get(ROUTE)
@@ -71,8 +73,8 @@ describe("students: get all", () => {
   });
 });
 
-describe("students: delete", () => {
-  it("should delete the student with id 99", function (done) {
+describe("users: delete", () => {
+  it("should delete the user with id 99", function (done) {
     chai
       .request(app)
       .delete(ROUTE)
@@ -82,7 +84,7 @@ describe("students: delete", () => {
           "id": "99",
         }
       })
-      .end(function (err, res) {
+      .end(function (err, res) {        
         if (err) done(err);
         expect(res.body.status).to.equal(true, "response status should be true.");
         done();

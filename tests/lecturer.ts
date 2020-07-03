@@ -26,7 +26,7 @@ describe("lecturers: save", () => {
         "data": {
           "id": "99",
           "code": "12345",
-          "fullName": "Dasun Dalaml",
+          "name": "Dasun Dalaml",
         }
       })
       .end(function (err, res) {
