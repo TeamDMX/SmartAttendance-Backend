@@ -15,11 +15,11 @@ export class Lecturer {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
   id: number;
 
-  @Column("varchar", { name: "code", unique: true, length: 10 })
+  @Column("char", { name: "code", unique: true, length: 5 })
   code: string;
 
-  @Column("varchar", { name: "full_name", length: 100 })
-  fullName: string;
+  @Column("varchar", { name: "name", length: 64 })
+  name: string;
 
   @ManyToMany(() => Course, (course) => course.lecturers)
   courses: Course[];

@@ -38,11 +38,11 @@ export class User {
   @Column("int", { name: "user_type_id" })
   userTypeId: number;
 
-  @Column("int", { name: "student_id", default: () => "'0'" })
-  studentId: number;
+  @Column("int", { name: "student_id", nullable: true })
+  studentId: number | null;
 
-  @Column("int", { name: "lecturer_id", default: () => "'0'" })
-  lecturerId: number;
+  @Column("int", { name: "lecturer_id", nullable: true })
+  lecturerId: number | null;
 
   @ManyToOne(() => Lecturer, (lecturer) => lecturer.users, {
     onDelete: "NO ACTION",

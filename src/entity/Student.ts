@@ -17,11 +17,11 @@ export class Student {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
   id: number;
 
-  @Column("varchar", { name: "reg_number", unique: true, length: 12 })
+  @Column("char", { name: "reg_number", unique: true, length: 7 })
   regNumber: string;
 
-  @Column("varchar", { name: "full_name", length: 100 })
-  fullName: string;
+  @Column("varchar", { name: "name", length: 64 })
+  name: string;
 
   @Column("varchar", { name: "index_number", unique: true, length: 12 })
   indexNumber: string;

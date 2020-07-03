@@ -5,7 +5,7 @@ export class StudentDao {
     static search({ keyword = "", skip = 0 }) {
         return getRepository(Student)
             .createQueryBuilder("r")
-            .where("r.fullName LIKE :keyword", { keyword: `%${keyword}%` })
+            .where("r.name LIKE :keyword", { keyword: `%${keyword}%` })
             .orWhere("r.indexNumber LIKE :keyword", { keyword: `%${keyword}%` })
             .orWhere("r.regNumber LIKE :keyword", { keyword: `%${keyword}%` })
             .skip(skip)
