@@ -73,12 +73,19 @@ app.use(express.json({
    limit: "8000kb"
 }));
 
-// Express.js: Sessions for login
-app.use(session({
+// Express.js: Register session middleware
+const sessionMiddleware = session({
    secret: process.env.SESSION_SECRET,
    saveUninitialized: false,
    resave: false
-}));
+});
+
+app.use(sessionMiddleware);
+
+// Socket.IO: Register session middleware
+io.use((socket, next) => {
+   sessionMiddleware(socket.request, {}, next);
+});
 
 // enable CORS on development enviroment
 if (process.env.PRODUCTION == "false") {
