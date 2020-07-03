@@ -17,14 +17,14 @@ before(function (done) {
 });
 
 describe("lecturers: save", () => {
-  it("should create a new lecturer with id 1", function (done) {
+  it("should create a new lecturer with id 99", function (done) {
     chai
       .request(app)
       .post(ROUTE)
       .set("content-type", "application/json; charset=utf-8")
       .send({
         "data": {
-          "id": "1",
+          "id": "99",
           "code": "12345",
           "fullName": "Dasun Dalaml",
         }
@@ -39,10 +39,10 @@ describe("lecturers: save", () => {
 
 
 describe("lecturers: get one", () => {
-  it("should get the lecturer info with id 1 as a object", function (done) {
+  it("should get the lecturer info with id 99 as a object", function (done) {
     chai
       .request(app)
-      .get("/api/lecturers?data[id]=1")
+      .get("/api/lecturers?data[id]=99")
       .set("content-type", "application/json; charset=utf-8")
       .send()
       .end(function (err, res) {
@@ -71,16 +71,17 @@ describe("lecturers: get all", () => {
 });
 
 describe("lecturers: delete", () => {
-  it("should delete the lecturer with id 1", function (done) {
+  it("should delete the lecturer with id 99", function (done) {
     chai
       .request(app)
       .delete(ROUTE)
       .set("content-type", "application/json; charset=utf-8")
       .send({
         "data": {
-          "id": "1",
+          "id": "99",
         }
-      })      .end(function (err, res) {
+      })
+      .end(function (err, res) {
         if (err) done(err);
         expect(res.body.status).to.equal(true, "response status should be true.");
         done();

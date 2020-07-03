@@ -17,14 +17,14 @@ before(function (done) {
 });
 
 describe("courses: save", () => {
-  it("should create a new course with id 1", function (done) {
+  it("should create a new course with id 99", function (done) {
     chai
       .request(app)
       .post(ROUTE)
       .set("content-type", "application/json; charset=utf-8")
       .send({
         "data": {
-          "id": "1",
+          "id": "99",
           "code": "ITC111",
           "name": "Introduction to Programming"
         }
@@ -39,10 +39,10 @@ describe("courses: save", () => {
 
 
 describe("courses: get one", () => {
-  it("should get the course info with id 1 as a object", function (done) {
+  it("should get the course info with id 99 as a object", function (done) {
     chai
       .request(app)
-      .get("/api/courses?data[id]=1")
+      .get("/api/courses?data[id]=99")
       .set("content-type", "application/json; charset=utf-8")
       .send()
       .end(function (err, res) {
@@ -71,14 +71,14 @@ describe("courses: get all", () => {
 });
 
 describe("courses: delete", () => {
-  it("should delete the course with id 1", function (done) {
+  it("should delete the course with id 99", function (done) {
     chai
       .request(app)
       .delete(ROUTE)
       .set("content-type", "application/json; charset=utf-8")
       .send({
         "data": {
-          "id": "1",
+          "id": "99",
         }
       })
       .end(function (err, res) {
