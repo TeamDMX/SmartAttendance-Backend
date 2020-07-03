@@ -27,6 +27,7 @@ import { CourseController } from "./controller/CourseController"
 import { StudentController } from "./controller/StudentController"
 import { LecturerController } from "./controller/LecturerController"
 import { UserController } from "./controller/UserController"
+import { LectureHallController } from "./controller/LectureHallController"
 
 /* 
 =====================================================================================
@@ -204,6 +205,32 @@ app.route("/api/users")
 
    .delete((req, res) => {
       UserController.delete(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
+// Routes:  Lecture Halls
+app.route("/api/lecture_halls")
+   .post((req, res) => {
+      LectureHallController.save(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .get((req, res) => {
+      LectureHallController.get(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .put((req, res) => {
+      LectureHallController.update(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .delete((req, res) => {
+      LectureHallController.delete(req.body.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
