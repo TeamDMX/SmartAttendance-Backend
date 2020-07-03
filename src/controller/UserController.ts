@@ -121,7 +121,7 @@ export class UserController {
 
     static async delete({ id }) {
         // find the entry with the given id
-        const entry = await getRepository(UserDao).findOne({ id: id }).catch(e => {
+        const entry = await getRepository(User).findOne({ id: id }).catch(e => {
             console.log(e.code, e);
             throw {
                 status: false,
@@ -139,7 +139,7 @@ export class UserController {
         }
 
         // delete the entry
-        await getRepository(UserDao).delete(entry).catch(e => {
+        await getRepository(User).delete(entry).catch(e => {
             console.log(e.code, e);
             throw {
                 status: false,
