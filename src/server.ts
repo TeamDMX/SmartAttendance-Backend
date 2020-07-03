@@ -90,7 +90,7 @@ if (process.env.PRODUCTION == "false") {
 }
 
 // Express.js: Folder with static HTML files to server the user
-app.use("/", express.static(`${__dirname}/../../public`));
+app.use("/", express.static(`${__dirname}/../public`));
 
 // skip check for development enviroments
 // app.use((req, res, next) => {
@@ -250,7 +250,7 @@ app.route("/api/general")
    });
 
 // Express.js: Start the server
-app.listen(process.env.PORT, () => console.log(`Server is running on ${process.env.PORT}!`));
+server.listen(process.env.PORT, () => console.log(`Server is running on ${process.env.PORT}!`));
 
 // export app for testing
 export default app;
