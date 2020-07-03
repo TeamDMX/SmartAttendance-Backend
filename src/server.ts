@@ -28,6 +28,7 @@ import { StudentController } from "./controller/StudentController"
 import { LecturerController } from "./controller/LecturerController"
 import { UserController } from "./controller/UserController"
 import { LectureHallController } from "./controller/LectureHallController"
+import { GeneralController } from "./controller/GeneralController"
 
 /* 
 =====================================================================================
@@ -231,6 +232,15 @@ app.route("/api/lecture_halls")
 
    .delete((req, res) => {
       LectureHallController.delete(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
+
+// Routes:  General routes for data tables
+app.route("/api/general")
+   .get((req, res) => {
+      GeneralController.get(req.query.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
