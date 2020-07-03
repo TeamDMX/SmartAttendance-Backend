@@ -42,7 +42,7 @@ describe("lecture halls: get one", () => {
   it("should get the lecture hall info with id 99 as a object", function (done) {
     chai
       .request(app)
-      .get("/api/lecture_halls?data[id]=99")
+      .get(`${ROUTE}?data[id]=99`)
       .set("content-type", "application/json; charset=utf-8")
       .send()
       .end(function (err, res) {
