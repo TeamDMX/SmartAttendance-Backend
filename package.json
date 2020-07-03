@@ -17,10 +17,11 @@
       "express-session": "^1.17.1",
       "mysql": "^2.14.1",
       "reflect-metadata": "^0.1.10",
+      "socket.io": "^2.3.0",
       "typeorm": "0.2.22"
    },
    "scripts": {
       "start": "ts-node src/server.ts",
-      "test": "mocha -r ts-node/register tests/*.ts --timeout 10000 --exit" 
+      "test": "mocha -r ts-node/register tests/*.ts --timeout 10000 --exit"
    }
 }

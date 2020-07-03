@@ -54,7 +54,7 @@ createConnection().then(() => {
 
 /* 
 =====================================================================================
-Express.js
+Express.js & Socket.io
 =====================================================================================
 */
 
@@ -63,6 +63,10 @@ Express.js
 
 // Express.js: Initialize
 const app = express();
+
+// Socket.io: Initialize
+const server = require("http").createServer(app);
+const io = require("socket.io")(server);
 
 // Express.js: Parse json request bodies
 app.use(express.json({
