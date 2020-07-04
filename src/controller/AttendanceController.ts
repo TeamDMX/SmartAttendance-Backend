@@ -4,6 +4,7 @@ import { getRepository } from "typeorm";
 import { Attendance } from "../entity/Attendance";
 import { Lecture } from "../entity/Lecture";
 import { StudentCourse } from "../entity/StudentCourse";
+import { Student } from "../entity/Student";
 
 import * as crypto from "crypto";
 
@@ -38,6 +39,7 @@ export class AttendanceController {
         // add lecture to ongoing markings
         this.ongoingMarkings[lectureId] = {
             mins: 0,
+            code: "",
             callback: () => {
                 // check if 30 mins reached
                 if (this.ongoingMarkings["mins"] == 29) {
@@ -48,9 +50,12 @@ export class AttendanceController {
                     return;
                 }
 
-                // start sending qr codes
+                // md5 hash used for qr codes
+                this.ongoingMarkings[lectureId].code = crypto.createHash("md5").update(lectureId + new Date().toISOString()).digest("hex").substring(0, 8);
+
+                // send code to relavant client
                 attendanceNamespace.to(socketId).emit("code", JSON.stringify({
-                    code: crypto.createHash("md5").update(lectureId + new Date().toISOString()).digest("hex"),
+                    code: this.ongoingMarkings[lectureId].code,
                     lectureId: lectureId
                 }));
 
@@ -78,10 +83,11 @@ export class AttendanceController {
 
         // check of provided code is valid
         if (this.ongoingMarkings[lectureId].code !== code) {
+            console.log("Invalid code");
             return;
         }
 
-        // check if mark request is from the lecturer or student
+        // check if mark request is from the lecturer or student        
         if (session.data.role.id == 3) {
             studentId = session.data.userId;
         } else if (session.data.role.id == 2) {
@@ -126,12 +132,35 @@ export class AttendanceController {
             };
         }
 
+        // check if attendance is already marked
+        const attendace = await getRepository(Attendance).findOne({
+            where: { studentId: studentId, lectureId: lectureId }
+        }).catch(e => {
+            console.log(e.code, e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            };
+        });
+
+        if (attendace !== undefined) {
+            throw {
+                status: false,
+                type: "input",
+                msg: "Your attendance is already marked!."
+            };
+        }
+
         // save attendance
         const entry = new Attendance();
         entry.studentId = studentId;
         entry.lectureId = lectureId;
 
-        await getRepository(Attendance).save(entry).catch(e => {
+        await getRepository(Attendance).save(entry).then(newEntry => {
+            // update live attendace marking list
+            this.sendUpdatesToClient(newEntry);
+        }).catch(e => {
             console.log(e.code, e);
             throw {
                 status: false,
@@ -144,5 +173,31 @@ export class AttendanceController {
             status: true,
             msg: "Attendance has been marked."
         }
+    }
+
+    static async sendUpdatesToClient(newEntry) {
+        const lectureId = newEntry.lectureId;
+        const studentId = newEntry.lectureId;
+
+        // get student info
+        const student = await getRepository(Student).findOne({
+            where: { studentId: studentId }
+        }).catch(e => {
+            console.log(e.code, e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            };
+        });
+
+        if (student == undefined) return;
+
+        // send to relavant client
+        const socketId = this.ongoingMarkings[lectureId].socketId;
+        this.ongoingMarkings[lectureId].attendanceNamespace.to(socketId).emit("newMarking", JSON.stringify({
+            student: student,
+            markedDatetime: newEntry.markedDatetime
+        }));
     }
 }

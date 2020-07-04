@@ -100,11 +100,12 @@ if (process.env.PRODUCTION == "false") {
 
    // dummy session data
    app.use((req, res, next) => {
-      req.session.data = {};
-      req.session.data.username = "admin";
-      req.session.data.logged = true;
-      req.session.data.userRoles = [{ id: 1 }, { id: 2 }];
-      req.session.data.userId = { id: 1 };
+      req.session.data = {
+         username: "admin",
+         logged: true,
+         role: {id: 3},
+         userId: 1
+      };
       next();
    });
 }
@@ -283,6 +284,14 @@ app.route("/api/lecture_halls")
    });
 
 
+// Routes: Attendance
+app.route("/api/attendances")
+   .post((req, res) => {
+      AttendanceController.markAttendance(req.session, req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
 // Routes:  General routes for data tables
 app.route("/api/general")
    .get((req, res) => {
@@ -293,7 +302,7 @@ app.route("/api/general")
 
 
 // Socket.IO: namespace for attendance marking view
-const attendanceNamespace = io.of("/attendance");
+const attendanceNamespace = io.of("/api/attendance");
 
 attendanceNamespace.on("connection", (socket) => {
    const lectureId = socket.handshake.query.lecture_id;
