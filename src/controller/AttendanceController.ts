@@ -3,6 +3,8 @@ require("dotenv").config();
 import { getRepository } from "typeorm";
 import { Attendance } from "../entity/Attendance";
 import { Lecture } from "../entity/Lecture";
+import { StudentCourse } from "../entity/StudentCourse";
+
 import * as crypto from "crypto";
 
 export class AttendanceController {
@@ -42,6 +44,7 @@ export class AttendanceController {
                     if (!this.ongoingMarkings["interval"]) return;
                     clearInterval(this.ongoingMarkings["interval"]);
                     attendanceNamespace.connected[socketId].disconnect();
+                    delete this.ongoingMarkings[lectureId];
                     return;
                 }
 
@@ -53,7 +56,9 @@ export class AttendanceController {
 
                 // increment mins
                 this.ongoingMarkings["mins"] += 0.15;
-            }
+            },
+            socketId: socketId,
+            attendanceNamespace: attendanceNamespace
         }
 
         // invoke callback for the first time
@@ -61,5 +66,83 @@ export class AttendanceController {
 
         // setInterval for callback
         this.ongoingMarkings[lectureId]["interval"] = setInterval(this.ongoingMarkings[lectureId].callback, 15000);
+    }
+
+    // mark requests from the app
+    static async markAttendance(session, data) {
+
+        // get code and lectureId from data
+        const code = data.code;
+        const lectureId = data.lectureId;
+        let studentId;
+
+        // check of provided code is valid
+        if (this.ongoingMarkings[lectureId].code !== code) {
+            return;
+        }
+
+        // check if mark request is from the lecturer or student
+        if (session.data.role.id == 3) {
+            studentId = session.data.userId;
+        } else if (session.data.role.id == 2) {
+            studentId = data.id;
+        } else {
+            throw {
+                status: false,
+                type: "input",
+                msg: "You aren't allowed to mark attendance"
+            };
+        }
+
+        // check student is registered for the course
+        const lecture = await getRepository(Lecture).findOne({
+            where: { id: lectureId }
+        }).catch(e => {
+            console.log(e.code, e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            };
+        });
+
+        const studentCourse = await getRepository(StudentCourse).findOne({
+            where: { studentId: studentId, courseId: lecture.courseId }
+        }).catch(e => {
+            console.log(e.code, e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            };
+        });
+
+        // if student is not registered for the course
+        if (studentCourse == undefined) {
+            throw {
+                status: false,
+                type: "input",
+                msg: "This student is not enrolled in the course!."
+            };
+        }
+
+        // save attendance
+        const entry = new Attendance();
+        entry.studentId = studentId;
+        entry.lectureId = lectureId;
+
+        await getRepository(Attendance).save(entry).catch(e => {
+            console.log(e.code, e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            }
+        });
+
+        return {
+            status: true,
+            msg: "Attendance has been marked."
+        }
     }
 }
