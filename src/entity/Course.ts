@@ -4,6 +4,7 @@ import {
   Index,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Lecture } from "./Lecture";
@@ -22,13 +23,7 @@ export class Course {
   @Column("varchar", { name: "name", length: 100 })
   name: string;
 
-  @ManyToMany(() => Lecture, (lecture) => lecture.courses)
-  @JoinTable({
-    name: "course_lecture",
-    joinColumns: [{ name: "course_id", referencedColumnName: "id" }],
-    inverseJoinColumns: [{ name: "lecture_id", referencedColumnName: "id" }],
-    schema: "smart_attendance",
-  })
+  @OneToMany(() => Lecture, (lecture) => lecture.course)
   lectures: Lecture[];
 
   @ManyToMany(() => Lecturer, (lecturer) => lecturer.courses)

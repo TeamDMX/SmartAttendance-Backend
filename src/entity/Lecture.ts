@@ -3,7 +3,6 @@ import {
   Entity,
   Index,
   JoinColumn,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -11,27 +10,46 @@ import {
 import { Attendance } from "./Attendance";
 import { Course } from "./Course";
 import { LectureHall } from "./LectureHall";
+import { LectureStatus } from "./LectureStatus";
 
 @Index("fk_lecture_lecture_hall1_idx", ["lectureHallId"], {})
+@Index("fk_lecture_course1_idx", ["courseId"], {})
+@Index("fk_lecture_lecture_status1_idx", ["lectureStatusId"], {})
 @Entity("lecture", { schema: "smart_attendance" })
 export class Lecture {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
   id: number;
 
-  @Column("date", { name: "date" })
-  date: string;
+  @Column("varchar", { name: "code", length: 45 })
+  code: string;
 
-  @Column("varchar", { name: "time", length: 45 })
-  time: string;
+  @Column("datetime", {
+    name: "start_datetime",
+    default: () => "CURRENT_TIMESTAMP",
+  })
+  startDatetime: Date;
+
+  @Column("int", { name: "allowed_mins", default: () => "'30'" })
+  allowedMins: number;
 
   @Column("int", { name: "lecture_hall_id" })
   lectureHallId: number;
 
+  @Column("int", { name: "course_id" })
+  courseId: number;
+
+  @Column("int", { name: "lecture_status_id" })
+  lectureStatusId: number;
+
   @OneToMany(() => Attendance, (attendance) => attendance.lecture)
   attendances: Attendance[];
 
-  @ManyToMany(() => Course, (course) => course.lectures)
-  courses: Course[];
+  @ManyToOne(() => Course, (course) => course.lectures, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "course_id", referencedColumnName: "id" }])
+  course: Course;
 
   @ManyToOne(() => LectureHall, (lectureHall) => lectureHall.lectures, {
     onDelete: "NO ACTION",
@@ -39,4 +57,11 @@ export class Lecture {
   })
   @JoinColumn([{ name: "lecture_hall_id", referencedColumnName: "id" }])
   lectureHall: LectureHall;
+
+  @ManyToOne(() => LectureStatus, (lectureStatus) => lectureStatus.lectures, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "lecture_status_id", referencedColumnName: "id" }])
+  lectureStatus: LectureStatus;
 }
