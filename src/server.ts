@@ -29,6 +29,7 @@ import { LecturerController } from "./controller/LecturerController"
 import { UserController } from "./controller/UserController"
 import { LectureHallController } from "./controller/LectureHallController"
 import { GeneralController } from "./controller/GeneralController"
+import { LectureController } from "./controller/LectureController"
 
 /* 
 =====================================================================================
@@ -219,6 +220,33 @@ app.route("/api/users")
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
+
+// Routes:  Lectures
+app.route("/api/lectures")
+   .post((req, res) => {
+      LectureController.save(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .get((req, res) => {
+      LectureController.get(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .put((req, res) => {
+      LectureController.update(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .delete((req, res) => {
+      LectureController.delete(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
 
 // Routes:  Lecture Halls
 app.route("/api/lecture_halls")
