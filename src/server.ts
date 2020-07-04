@@ -247,6 +247,13 @@ app.route("/api/lectures")
          .catch(e => res.json(e));
    });
 
+// Routes: Lecture Eligibility check for start making attendace 
+app.route("/api/lecture/check")
+   .get((req, res) => {
+      LectureController.checkMarkingEligibility(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
 
 // Routes:  Lecture Halls
 app.route("/api/lecture_halls")
