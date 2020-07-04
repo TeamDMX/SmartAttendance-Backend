@@ -255,6 +255,20 @@ app.route("/api/general")
          .catch(e => res.json(e));
    });
 
+
+// Socket.IO: namespace for attendance marking view
+const attendanceNamespace = io.of("/attendance");
+
+attendanceNamespace.on("connection", (socket) => {
+   const lectureId = socket.handshake.query.lecture_id;
+   const socketId = socket.id;
+   attendanceNamespace.to(socketId).emit("qrcode", Math.floor((Math.random() * 1000) + 1));
+   setInterval(() => {
+      attendanceNamespace.to(socketId).emit("qrcode", Math.floor((Math.random() * 1000) + 1));
+      console.log("data send");
+   }, 5000);
+});
+
 // Express.js: Start the server
 server.listen(process.env.PORT, () => console.log(`Server is running on ${process.env.PORT}!`));
 
