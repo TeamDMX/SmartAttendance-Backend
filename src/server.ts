@@ -30,6 +30,7 @@ import { UserController } from "./controller/UserController"
 import { LectureHallController } from "./controller/LectureHallController"
 import { GeneralController } from "./controller/GeneralController"
 import { LectureController } from "./controller/LectureController"
+import { AttendanceController } from "./controller/AttendanceController"
 
 /* 
 =====================================================================================
@@ -297,11 +298,14 @@ const attendanceNamespace = io.of("/attendance");
 attendanceNamespace.on("connection", (socket) => {
    const lectureId = socket.handshake.query.lecture_id;
    const socketId = socket.id;
-   attendanceNamespace.to(socketId).emit("qrcode", Math.floor((Math.random() * 1000) + 1));
-   setInterval(() => {
-      attendanceNamespace.to(socketId).emit("qrcode", Math.floor((Math.random() * 1000) + 1));
-      console.log("data send");
-   }, 5000);
+
+   AttendanceController.startMarking(lectureId, socketId, attendanceNamespace);
+
+   // attendanceNamespace.to(socketId).emit("qrcode", Math.floor((Math.random() * 1000) + 1));
+   // setInterval(() => {
+   //    attendanceNamespace.to(socketId).emit("qrcode", Math.floor((Math.random() * 1000) + 1));
+   //    console.log("data send");
+   // }, 5000);
 });
 
 // Express.js: Start the server
