@@ -2,11 +2,10 @@ import {
   Column,
   Entity,
   Index,
-  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Course } from "./Course";
+import { LecturerCourse } from "./LecturerCourse";
 import { User } from "./User";
 
 @Index("code_UNIQUE", ["code"], { unique: true })
@@ -21,8 +20,8 @@ export class Lecturer {
   @Column("varchar", { name: "name", length: 64 })
   name: string;
 
-  @ManyToMany(() => Course, (course) => course.lecturers)
-  courses: Course[];
+  @OneToMany(() => LecturerCourse, (lecturerCourse) => lecturerCourse.lecturer)
+  lecturerCourses: LecturerCourse[];
 
   @OneToMany(() => User, (user) => user.lecturer)
   users: User[];

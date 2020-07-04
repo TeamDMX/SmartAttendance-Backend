@@ -2,12 +2,11 @@ import {
   Column,
   Entity,
   Index,
-  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Attendance } from "./Attendance";
-import { Course } from "./Course";
+import { StudentCourse } from "./StudentCourse";
 import { User } from "./User";
 
 @Index("index_number_UNIQUE", ["indexNumber"], { unique: true })
@@ -29,8 +28,8 @@ export class Student {
   @OneToMany(() => Attendance, (attendance) => attendance.student)
   attendances: Attendance[];
 
-  @ManyToMany(() => Course, (course) => course.students)
-  courses: Course[];
+  @OneToMany(() => StudentCourse, (studentCourse) => studentCourse.student)
+  studentCourses: StudentCourse[];
 
   @OneToMany(() => User, (user) => user.student)
   users: User[];
