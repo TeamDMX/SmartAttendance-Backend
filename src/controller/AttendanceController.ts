@@ -22,6 +22,7 @@ export class AttendanceController {
 
         // check if valid data is given
         await ValidationUtil.validate("ATTENDANCE", { lectureId }).catch(e => {
+            attendanceNamespace.to(socketId).emit("error", "Please provide a valid lectrue.");
             currentClient.disconnect();
             throw e;
         });
@@ -31,6 +32,7 @@ export class AttendanceController {
             where: { id: lectureId }
         }).catch(e => {
             console.log(e.code, e);
+            attendanceNamespace.to(socketId).emit("error", "Server error!. Please check logs.");
             currentClient.disconnect();
             throw {
                 status: false,
