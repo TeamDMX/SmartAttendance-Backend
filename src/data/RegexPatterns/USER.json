@@ -1,0 +1,37 @@
+[
+  {
+    "regex": "/^[\\d]+$/",
+    "attribute": "id",
+    "error": "Please provide a valid id!."
+  },
+  {
+    "regex": "/\\S+@\\S+\\.\\S+/",
+    "attribute": "email",
+    "error": "Please provide a valid email!."
+  },
+  {
+    "regex": "/^[\\w\\s\\d]{5,100}$/",
+    "attribute": "password",
+    "error": "Please provide a valid password!."
+  },
+  {
+    "regex": "/^[\\d,]+$/",
+    "attribute": "roleId",
+    "error": "Please provide a valid role!."
+  },
+  {
+    "regex": "/^[\\d,]+$/",
+    "attribute": "userTypeId",
+    "error": "Please provide a valid user type!."
+  },
+  {
+    "regex": "/^[\\d]+$/",
+    "attribute": "studentId",
+    "error": "Please provide a valid student!."
+  },
+  {
+    "regex": "/^[\\d]+$/",
+    "attribute": "lecturerId",
+    "error": "Please provide a valid lecturer!."
+  }
+]

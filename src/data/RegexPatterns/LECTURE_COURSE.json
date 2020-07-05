@@ -1,0 +1,12 @@
+[
+  {
+    "regex": "/^[\\d]+$/",
+    "attribute": "lecturerId",
+    "error": "Please provide a valid lecturer!."
+  },
+  {
+    "regex": "/^[\\d]+$/",
+    "attribute": "courseId",
+    "error": "Please provide a course!."
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "regex": "/^[\\d]+$/",
+    "attribute": "id",
+    "error": "Please provide a valid id!."
+  },
+  {
+    "regex": "/^[\\w\\s\\-\\/]{5,6}$/",
+    "attribute": "code",
+    "error": "Please provide a valid code!."
+  },
+  {
+    "regex": "/^[\\w\\s\\-\\/]{5,100}$/",
+    "attribute": "name",
+    "error": "Please provide a valid name!."
+  }
+]
