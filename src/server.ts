@@ -31,6 +31,7 @@ import { LectureHallController } from "./controller/LectureHallController"
 import { GeneralController } from "./controller/GeneralController"
 import { LectureController } from "./controller/LectureController"
 import { AttendanceController } from "./controller/AttendanceController"
+import { RegexPatternUtil } from "./util/RegexPatternUtil"
 
 /* 
 =====================================================================================
@@ -103,7 +104,7 @@ if (process.env.PRODUCTION == "false") {
       req.session.data = {
          username: "admin",
          logged: true,
-         role: {id: 3},
+         role: { id: 3 },
          userId: 1
       };
       next();
@@ -288,6 +289,14 @@ app.route("/api/lecture_halls")
 app.route("/api/attendances")
    .post((req, res) => {
       AttendanceController.markAttendance(req.session, req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
+// Routes: Regexes
+app.route("/api/regexes")
+   .get((req, res) => {
+      RegexPatternUtil.getModuleRegex(req.query.data.module)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
