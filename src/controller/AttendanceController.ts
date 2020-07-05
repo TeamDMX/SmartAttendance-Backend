@@ -5,6 +5,7 @@ import { Attendance } from "../entity/Attendance";
 import { Lecture } from "../entity/Lecture";
 import { StudentCourse } from "../entity/StudentCourse";
 import { Student } from "../entity/Student";
+import { ValidationUtil } from "../util/ValidationUtil";
 
 import * as crypto from "crypto";
 
@@ -16,11 +17,21 @@ export class AttendanceController {
 
     static async startMarking(lectureId, socketId, attendanceNamespace) {
 
+        // get the relevant client from connected clients
+        const currentClient = attendanceNamespace.connected[socketId];
+
+        // check if valid data is given
+        await ValidationUtil.validate("ATTENDANCE", { lectureId }).catch(e => {
+            currentClient.disconnect();
+            throw e;
+        });
+
         // search for a lecture with given id
         const lecture = await getRepository(Lecture).findOne({
             where: { id: lectureId }
         }).catch(e => {
             console.log(e.code, e);
+            currentClient.disconnect();
             throw {
                 status: false,
                 type: "server",
@@ -28,11 +39,10 @@ export class AttendanceController {
             };
         });
 
-
         // check lecture status 
         if (lecture.lectureStatusId !== 2) {
             attendanceNamespace.to(socketId).emit("error", "This lecture is not active!.");
-            attendanceNamespace.connected[socketId].disconnect();
+            currentClient.disconnect();
             return;
         }
 
@@ -45,7 +55,7 @@ export class AttendanceController {
                 if (this.ongoingMarkings["mins"] == 29) {
                     if (!this.ongoingMarkings["interval"]) return;
                     clearInterval(this.ongoingMarkings["interval"]);
-                    attendanceNamespace.connected[socketId].disconnect();
+                    currentClient.disconnect();
                     delete this.ongoingMarkings[lectureId];
                     return;
                 }
@@ -99,6 +109,9 @@ export class AttendanceController {
                 msg: "You aren't allowed to mark attendance"
             };
         }
+
+        // check if valid data is given
+        await ValidationUtil.validate("ATTENDANCE", { studentId, lectureId });
 
         // check student is registered for the course
         const lecture = await getRepository(Lecture).findOne({

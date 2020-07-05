@@ -3,6 +3,7 @@ require("dotenv").config();
 import { getRepository } from "typeorm";
 import { Course } from "../entity/Course";
 import { CourseDao } from "../dao/CourseDao";
+import { ValidationUtil } from "../util/ValidationUtil";
 
 export class CourseController {
     static async get(data) {
@@ -14,6 +15,10 @@ export class CourseController {
     }
 
     private static async getOne({ id }) {
+
+        // check if valid data is given
+        await ValidationUtil.validate("COURSE", { id });
+
         // search for an entry with given id
         const entry = await getRepository(Course).findOne({
             where: { id: id }
@@ -61,8 +66,8 @@ export class CourseController {
         // create entry object
         const entry = data as Course;
 
-        // // check if valid data is given
-        // await ValidationUtil.validate("ROLE", role);
+        // check if valid data is given
+        await ValidationUtil.validate("COURSE", entry);
 
         await getRepository(Course).save(entry).catch(e => {
             console.log(e.code, e);
@@ -92,7 +97,7 @@ export class CourseController {
         const editedEntry = data as Course;
 
         // check if valid data is given
-        // await ValidationUtil.validate("ROLE", editedRole);
+        await ValidationUtil.validate("COURSE", editedEntry);
 
         // check if an entry is present with the given id
         const selectedEntry = await getRepository(CourseDao).findOne(editedEntry.id).catch(e => {
@@ -129,6 +134,9 @@ export class CourseController {
     }
 
     static async delete({ id }) {
+        // check if valid data is given
+        await ValidationUtil.validate("COURSE", { id });
+
         // find the entry with the given id
         const entry = await getRepository(Course).findOne({ id: id }).catch(e => {
             console.log(e.code, e);

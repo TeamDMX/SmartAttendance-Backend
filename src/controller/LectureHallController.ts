@@ -4,6 +4,7 @@ import { getRepository } from "typeorm";
 import { LectureHall } from "../entity/LectureHall";
 import { LecturerDao } from "../dao/LecturerDao";
 import { LectureHallDao } from "../dao/LectureHallDao";
+import { ValidationUtil } from "../util/ValidationUtil";
 
 export class LectureHallController {
     static async get(data) {
@@ -15,6 +16,9 @@ export class LectureHallController {
     }
 
     private static async getOne({ id }) {
+        // check if valid data is given
+        await ValidationUtil.validate("LECTURE_HALL", { id });
+
         // search for an entry with given id
         const entry = await getRepository(LectureHall).findOne({
             where: { id: id }
@@ -62,8 +66,8 @@ export class LectureHallController {
         // create entry object
         const entry = data as LectureHall;
 
-        // // check if valid data is given
-        // await ValidationUtil.validate("ROLE", role);
+        // check if valid data is given
+        await ValidationUtil.validate("LECTURE_HALL", entry);
 
         await getRepository(LectureHall).save(entry).catch(e => {
             console.log(e.code, e);
@@ -93,7 +97,7 @@ export class LectureHallController {
         const editedEntry = data as LectureHall;
 
         // check if valid data is given
-        // await ValidationUtil.validate("ROLE", editedRole);
+        await ValidationUtil.validate("LECTURE_HALL", editedEntry);
 
         // check if an entry is present with the given id
         const selectedEntry = await getRepository(LectureHall).findOne(editedEntry.id).catch(e => {
@@ -130,6 +134,9 @@ export class LectureHallController {
     }
 
     static async delete({ id }) {
+        // check if valid data is given
+        await ValidationUtil.validate("LECTURE_HALL", { id });
+
         // find the entry with the given id
         const entry = await getRepository(LectureHall).findOne({ id: id }).catch(e => {
             console.log(e.code, e);

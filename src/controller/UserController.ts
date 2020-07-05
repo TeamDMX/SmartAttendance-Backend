@@ -3,6 +3,7 @@ require("dotenv").config();
 import { getRepository } from "typeorm";
 import { User } from "../entity/User";
 import { UserDao } from "../dao/UserDao";
+import { ValidationUtil } from "../util/ValidationUtil";
 
 export class UserController {
     static async get(data) {
@@ -14,6 +15,9 @@ export class UserController {
     }
 
     private static async getOne({ id }) {
+        // check if valid data is given
+        await ValidationUtil.validate("USER", { id });
+
         // search for an entry with given id
         const entry = await UserDao.getOne(id)
 
@@ -52,8 +56,8 @@ export class UserController {
         // create entry object
         const entry = data as User;
 
-        // // check if valid data is given
-        // await ValidationUtil.validate("ROLE", role);
+        // check if valid data is given
+        await ValidationUtil.validate("USER", entry);
 
         await getRepository(User).save(entry).catch(e => {
             console.log(e.code, e);
@@ -83,7 +87,7 @@ export class UserController {
         const editedEntry = data as User;
 
         // check if valid data is given
-        // await ValidationUtil.validate("ROLE", editedRole);
+        await ValidationUtil.validate("USER", editedEntry);
 
         // check if an entry is present with the given id
         const selectedEntry = await getRepository(UserDao).findOne(editedEntry.id).catch(e => {
@@ -120,6 +124,9 @@ export class UserController {
     }
 
     static async delete({ id }) {
+        // check if valid data is given
+        await ValidationUtil.validate("USER", { id });
+
         // find the entry with the given id
         const entry = await getRepository(User).findOne({ id: id }).catch(e => {
             console.log(e.code, e);
