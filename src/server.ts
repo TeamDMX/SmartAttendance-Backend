@@ -317,7 +317,9 @@ attendanceNamespace.on("connection", (socket) => {
    const lectureId = socket.handshake.query.lecture_id;
    const socketId = socket.id;
 
-   AttendanceController.startMarking(lectureId, socketId, attendanceNamespace);
+   AttendanceController.startMarking(lectureId, socketId, attendanceNamespace).catch(e => {
+      console.log(e);
+   });
 
    // attendanceNamespace.to(socketId).emit("qrcode", Math.floor((Math.random() * 1000) + 1));
    // setInterval(() => {
