@@ -19,9 +19,9 @@ export class AttendanceController {
 
         // get the relevant client from connected clients
         const currentClient = attendanceNamespace.connected[socketId];
-
+                
         // check if valid data is given
-        await ValidationUtil.validate("ATTENDANCE", { lectureId }).catch(e => {
+        await ValidationUtil.validate("ATTENDANCE", { lectureId }).catch(e => {            
             attendanceNamespace.to(socketId).emit("error", "Please provide a valid lectrue.");
             currentClient.disconnect();
             throw e;
@@ -40,6 +40,13 @@ export class AttendanceController {
                 msg: "Server Error!. Please check logs."
             };
         });
+
+        // when lecture is not found        
+        if (lecture == undefined) {
+            attendanceNamespace.to(socketId).emit("error", "That lecture doesn't exist!.");
+            currentClient.disconnect();
+            return;  
+        }
 
         // check lecture status 
         if (lecture.lectureStatusId !== 2) {
