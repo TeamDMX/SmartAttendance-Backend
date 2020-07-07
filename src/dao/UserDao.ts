@@ -8,8 +8,8 @@ export class UserDao {
             .select([
                 "u.id", "u.email", "u.regDatetime"
             ])
-            .leftJoinAndSelect("u.role", "r")
-            .leftJoinAndSelect("u.userType", "ut")
+            .leftJoinAndSelect("u.userRoles", "ur")
+            .leftJoinAndSelect("ur.role", "r")
             .leftJoinAndSelect("u.student", "st")
             .leftJoinAndSelect("u.lecturer", "lec")
             .where("u.email LIKE :keyword", { keyword: `%${keyword}%` })
@@ -24,8 +24,8 @@ export class UserDao {
             .select([
                 "u.id", "u.email", "u.regDatetime"
             ])
-            .leftJoinAndSelect("u.role", "r")
-            .leftJoinAndSelect("u.userType", "ut")
+            .leftJoinAndSelect("u.userRoles", "ur")
+            .leftJoinAndSelect("ur.role", "r")
             .leftJoinAndSelect("u.student", "st")
             .leftJoinAndSelect("u.lecturer", "lec")
             .where("u.id = :keyword", { keyword: id })

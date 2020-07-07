@@ -2,8 +2,10 @@ require("dotenv").config();
 
 import { getRepository } from "typeorm";
 import { User } from "../entity/User";
+import { UserRole } from "../entity/UserRole";
 import { UserDao } from "../dao/UserDao";
 import { ValidationUtil } from "../util/ValidationUtil";
+import * as crypto from "crypto";
 
 export class UserController {
     static async get(data) {
@@ -59,7 +61,10 @@ export class UserController {
         // check if valid data is given
         await ValidationUtil.validate("USER", entry);
 
-        await getRepository(User).save(entry).catch(e => {
+        // hash passwrod
+        entry.password = crypto.createHash("sha512").update(entry.password).digest("hex");
+
+        const newUser = await getRepository(User).save(entry).catch(e => {
             console.log(e.code, e);
 
             if (e.code == "ER_DUP_ENTRY") {
@@ -75,6 +80,27 @@ export class UserController {
                 msg: "Server Error!. Please check logs."
             }
         });
+
+		// set roles for new user
+		const userRoles = data.roleIds.map(rid => {
+			return { userId: newUser.id, roleId: rid }
+		});
+
+		await getRepository(UserRole).save(userRoles).catch(e => {
+			console.log(e.code, e);
+			if (e.code == "ER_DUP_ENTRY") {
+				throw {
+					status: false,
+					type: "input",
+					msg: "User roles already exists!."
+				}
+			}
+			throw {
+				status: false,
+				type: "server",
+				msg: "Server Error!. Please check logs. (Role adding)"
+			}
+		});
 
         return {
             status: true,
