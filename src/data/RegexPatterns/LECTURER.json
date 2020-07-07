@@ -5,7 +5,7 @@
     "error": "Please provide a valid id!."
   },
   {
-    "regex": "/^[\\w\\s\\-\\/]{5,6}$/",
+    "regex": "/^[\\w\\s\\-\\/]{5}$/",
     "attribute": "code",
     "error": "Please provide a valid code!."
   },
