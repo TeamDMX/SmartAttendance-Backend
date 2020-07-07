@@ -26,8 +26,8 @@ describe("users: save", () => {
         "data": {
           "id": "99",
           "email": "kasun@kasun.com",
-          "password": "some hash",
-          "roleId": "1",
+          "password": "admin",
+          "roleIds": ["1"],
           "userTypeId": "1",
           "lecturerId": "1"
         }
