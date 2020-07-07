@@ -26,14 +26,14 @@ describe("lectures: save", () => {
         "data": {
           "id": "99",
           "code": "SP9876",
-          "startDatetime": "2020-07-04 14:39:12",
+          "startDatetime": "2020-07-07T14:04:16.301Z",
           "allowedMins": "20",
           "lectureHallId": "1",
           "courseId": "1",
           "lectureStatusId":"1"
         }
       })
-      .end(function (err, res) {
+      .end(function (err, res) {        
         if (err) done(err);
         expect(res.body.status).to.equal(true, "response status should be true.");
         done();
