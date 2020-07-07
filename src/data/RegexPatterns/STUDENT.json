@@ -5,7 +5,7 @@
     "error": "Please provide a valid id!."
   },
   {
-    "regex": "/^[A-Z]{1,4}[\\d]{1,7}$/",
+    "regex": "/^[A-Z]{2}[\\d]{5}$/",
     "attribute": "regNumber",
     "error": "Please provide a registration number!."
   },
