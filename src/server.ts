@@ -33,6 +33,7 @@ import { LectureController } from "./controller/LectureController"
 import { AttendanceController } from "./controller/AttendanceController"
 import { RegexPatternUtil } from "./util/RegexPatternUtil"
 import { AuthController } from "./controller/AuthController"
+import { LecturerCourseController } from "./controller/LecturerCourseController"
 
 /* 
 =====================================================================================
@@ -214,6 +215,41 @@ app.route("/api/lecturers")
          .catch(e => res.json(e));
    });
 
+// Routes:  Lecturer courses
+app.route("/api/lecturer/courses")
+   .get((req, res) => {
+      LecturerCourseController.getCourses(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
+
+// Routes:  Lecturer lectures
+app.route("/api/lecturer/lectures")
+   .post((req, res) => {
+      LecturerCourseController.saveLecture(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .get((req, res) => {
+      LecturerCourseController.getLectures(req.query.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .put((req, res) => {
+      LecturerCourseController.updateLecture(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .delete((req, res) => {
+      LecturerCourseController.deleteLecture(req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
 // Routes:  Users
 app.route("/api/users")
    .post((req, res) => {
@@ -269,7 +305,7 @@ app.route("/api/lectures")
 // Routes: Lecture Eligibility check for start making attendace 
 app.route("/api/lecture/check")
    .get((req, res) => {
-      LectureController.checkMarkingEligibility(req.query.data)
+      LecturerCourseController.checkLectureMarkingEligibility(req.query.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    })
