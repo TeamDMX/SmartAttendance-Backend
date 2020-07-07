@@ -100,7 +100,7 @@ export class CourseController {
         await ValidationUtil.validate("COURSE", editedEntry);
 
         // check if an entry is present with the given id
-        const selectedEntry = await getRepository(CourseDao).findOne(editedEntry.id).catch(e => {
+        const selectedEntry = await getRepository(Course).findOne(editedEntry.id).catch(e => {
             console.log(e.code, e);
             throw {
                 status: false,
