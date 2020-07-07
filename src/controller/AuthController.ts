@@ -3,10 +3,9 @@ require("dotenv").config();
 import { User } from "../entity/User";
 import { Module } from "../entity/Module";
 import { Privilege } from "../entity/Privilege";
-
 import { getRepository } from "typeorm";
+import * as crypto from "crypto";
 
-const crypto = require("crypto");
 
 export class AuthController {
     static async logIn(session, { username, password }) {
