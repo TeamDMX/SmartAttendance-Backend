@@ -32,6 +32,7 @@ import { GeneralController } from "./controller/GeneralController"
 import { LectureController } from "./controller/LectureController"
 import { AttendanceController } from "./controller/AttendanceController"
 import { RegexPatternUtil } from "./util/RegexPatternUtil"
+import { AuthController } from "./controller/AuthController"
 
 /* 
 =====================================================================================
@@ -62,7 +63,7 @@ Express.js & Socket.io
 */
 
 // method used for checking permissions
-// const isAuthorized = AuthController.isAuthorized;
+const isAuthorized = AuthController.isAuthorized;
 
 // Express.js: Initialize
 const app = express();
@@ -119,6 +120,21 @@ app.use("/", express.static(`${__dirname}/../../Frontend`));
 Routes
 =====================================================================================
 */
+
+// Routes: Authentication Routes
+app.route("/api/login")
+   .post((req, res) => {
+      AuthController.logIn(req.session, req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
+app.route("/api/logout")
+   .get((req, res) => {
+      AuthController.logOut(req.session)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
 
 // Routes:  Course Routes
 app.route("/api/courses")
