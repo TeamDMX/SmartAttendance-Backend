@@ -22,6 +22,7 @@
    },
    "scripts": {
       "start": "ts-node src/server.ts",
-      "test": "mocha -r ts-node/register tests/*.ts --timeout 10000 --exit"
+      "test": "mocha -r ts-node/register tests/*.ts --timeout 10000 --exit",
+      "test-specific": "mocha -r ts-node/register tests/auth.ts --timeout 10000 --exit"
    }
 }
