@@ -101,6 +101,14 @@ export class AttendanceController {
         const studentId = data.studentId;
         const lecturerId = data.lecturerId;
 
+        // check if valid data is given
+        await ValidationUtil.validate("ATTENDANCE",
+            {
+                studentId,
+                lectureId,
+                lecturerId: data.lecturerId == undefined ? 0 : data.lecturerId
+            });
+
         // if this not an ongoing marking
         if (!this.ongoingMarkings[lectureId]) {
             throw {
@@ -125,10 +133,15 @@ export class AttendanceController {
                     msg: "You don't have permission to mark someone else!."
                 };
             }
+        } else {
+            if (lecturerId !== session.userId) {
+                throw {
+                    status: false,
+                    type: "perm",
+                    msg: "You don't have permission to perform this action!"
+                }
+            }
         }
-
-        // check if valid data is given
-        await ValidationUtil.validate("ATTENDANCE", { studentId, lectureId });
 
         // check student is registered for the course
         const lecture = await getRepository(Lecture).findOne({
