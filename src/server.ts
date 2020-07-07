@@ -104,7 +104,7 @@ if (process.env.PRODUCTION == "false") {
       req.session.data = {
          username: "admin",
          logged: true,
-         role: { id: 3 },
+         userRoles: [{ id: 1 }],
          userId: 1
       };
       next();
@@ -112,7 +112,7 @@ if (process.env.PRODUCTION == "false") {
 }
 
 // Express.js: Folder with static HTML files to server the user
-app.use("/", express.static(`${__dirname}/../public`));
+app.use("/", express.static(`${__dirname}/../../Frontend`));
 
 /* 
 =====================================================================================
