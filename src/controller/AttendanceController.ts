@@ -19,9 +19,9 @@ export class AttendanceController {
 
         // get the relevant client from connected clients
         const currentClient = attendanceNamespace.connected[socketId];
-                
+
         // check if valid data is given
-        await ValidationUtil.validate("ATTENDANCE", { lectureId }).catch(e => {            
+        await ValidationUtil.validate("ATTENDANCE", { lectureId }).catch(e => {
             attendanceNamespace.to(socketId).emit("error", "Please provide a valid lectrue.");
             currentClient.disconnect();
             throw e;
@@ -45,7 +45,7 @@ export class AttendanceController {
         if (lecture == undefined) {
             attendanceNamespace.to(socketId).emit("error", "That lecture doesn't exist!.");
             currentClient.disconnect();
-            return;  
+            return;
         }
 
         // check lecture status 
@@ -98,7 +98,17 @@ export class AttendanceController {
         // get code and lectureId from data
         const code = data.code;
         const lectureId = data.lectureId;
-        let studentId;
+        const studentId = data.studentId;
+        const lecturerId = data.lecturerId;
+
+        // if this not an ongoing marking
+        if (!this.ongoingMarkings[lectureId]) {
+            throw {
+                status: false,
+                type: "input",
+                msg: "There is no ongoing session for this lecture!."
+            };
+        }
 
         // check of provided code is valid
         if (this.ongoingMarkings[lectureId].code !== code) {
@@ -106,17 +116,15 @@ export class AttendanceController {
             return;
         }
 
-        // check if mark request is from the lecturer or student        
-        if (session.data.role.id == 3) {
-            studentId = session.data.userId;
-        } else if (session.data.role.id == 2) {
-            studentId = data.id;
-        } else {
-            throw {
-                status: false,
-                type: "input",
-                msg: "You aren't allowed to mark attendance"
-            };
+        // if this request is from a student
+        if (lecturerId == undefined) {
+            if (session.userId !== studentId) {
+                throw {
+                    status: false,
+                    type: "perm",
+                    msg: "You don't have permission to mark someone else!."
+                };
+            }
         }
 
         // check if valid data is given
