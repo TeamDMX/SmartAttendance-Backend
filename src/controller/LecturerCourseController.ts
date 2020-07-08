@@ -4,8 +4,18 @@ import { LecturerCourse } from "../entity/LecturerCourse";
 import { ValidationUtil } from "../util/ValidationUtil";
 
 export class LecturerCourseController {
-    static async getCourses({ lecturerId }) {
+    static async getCourses({ lecturerId }, session) {
         await ValidationUtil.validate("LECTURER", { id: lecturerId });
+        
+        // check if session lecturer is the same        
+        if (lecturerId != session.data.userId) {
+            
+            throw {
+                status: false,
+                type: "perm",
+                msg: "You don't have permission to perform this action!"
+            }
+        }
 
         const entries = await getRepository(LecturerCourse).find({
             where: { lecturerId: lecturerId },
@@ -33,8 +43,30 @@ export class LecturerCourseController {
         }
     }
 
-    static async getLectures({ courseId }) {
+    static async getLectures({ courseId }, session) {
         await ValidationUtil.validate("COURSE", { id: courseId });
+
+        // check if lecturer has access to this course
+        const course = await getRepository(LecturerCourse).findOne({
+            where: { lecturerId: session.data.userId, courseId: courseId },
+            relations: ["course"]
+        }).catch(e => {
+            console.log(e.code, e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            };
+        });
+
+        if (!course) {
+            throw {
+                status: false,
+                type: "perm",
+                msg: "You don't have permission to perform this action!"
+            }
+        }
+
 
         const entries = await getRepository(Lecture).find({
             where: { courseId: courseId },
@@ -65,12 +97,33 @@ export class LecturerCourseController {
         }
     }
 
-    static async saveLecture(data) {
+    static async saveLecture(data, session) {
         // create entry object
         const entry = data as Lecture;
 
         // check if valid data is given
         await ValidationUtil.validate("LECTURE", entry);
+
+        // check if lecturer has access to this course
+        const course = await getRepository(LecturerCourse).findOne({
+            where: { lecturerId: session.data.userId, courseId: entry.courseId },
+            relations: ["course"]
+        }).catch(e => {
+            console.log(e.code, e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            };
+        });
+
+        if (!course) {
+            throw {
+                status: false,
+                type: "perm",
+                msg: "You don't have permission to perform this action!"
+            }
+        }
 
         await getRepository(Lecture).save(entry).catch(e => {
             console.log(e.code, e);
@@ -95,12 +148,33 @@ export class LecturerCourseController {
         };
     }
 
-    static async updateLecture(data) {
+    static async updateLecture(data, session) {
         // create entry object
         const editedEntry = data as Lecture;
 
         // check if valid data is given
         await ValidationUtil.validate("LECTURE", editedEntry);
+
+        // check if lecturer has access to this course
+        const course = await getRepository(LecturerCourse).findOne({
+            where: { lecturerId: session.data.userId, courseId: editedEntry.courseId },
+            relations: ["course"]
+        }).catch(e => {
+            console.log(e.code, e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            };
+        });
+
+        if (!course) {
+            throw {
+                status: false,
+                type: "perm",
+                msg: "You don't have permission to perform this action!"
+            }
+        }
 
         // check if an entry is present with the given id
         const selectedEntry = await getRepository(Lecture).findOne(editedEntry.id).catch(e => {
@@ -136,9 +210,10 @@ export class LecturerCourseController {
         };
     }
 
-    static async deleteLecture({ id }) {
+    static async deleteLecture({ id }, session) {
         // check if valid data is given
         await ValidationUtil.validate("LECTURE", { id });
+
 
         // find the entry with the given id
         const entry = await getRepository(Lecture).findOne({ id: id }).catch(e => {
@@ -155,6 +230,27 @@ export class LecturerCourseController {
                 status: false,
                 type: "input",
                 msg: "That entry doesn't exist in our database!."
+            }
+        }
+
+        // check if lecturer has access to this course
+        const course = await getRepository(LecturerCourse).findOne({
+            where: { lecturerId: session.data.userId, courseId: entry.courseId },
+            relations: ["course"]
+        }).catch(e => {
+            console.log(e.code, e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            };
+        });
+
+        if (!course) {
+            throw {
+                status: false,
+                type: "perm",
+                msg: "You don't have permission to perform this action!"
             }
         }
 
@@ -175,7 +271,7 @@ export class LecturerCourseController {
     }
 
     // check if given lecture is allowed to mark attendance
-    static async checkLectureMarkingEligibility({ id }) {
+    static async checkLectureMarkingEligibility({ id }, session) {
 
         // search for a lecture with given id
         const entry = await getRepository(Lecture).findOne({
@@ -196,6 +292,28 @@ export class LecturerCourseController {
                 type: "input",
                 msg: "Unable to find a lecture with that id."
             };
+        }
+
+
+        // check if lecturer has access to this course
+        const course = await getRepository(LecturerCourse).findOne({
+            where: { lecturerId: session.data.userId, courseId: entry.courseId },
+            relations: ["course"]
+        }).catch(e => {
+            console.log(e.code, e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            };
+        });
+
+        if (!course) {
+            throw {
+                status: false,
+                type: "perm",
+                msg: "You don't have permission to perform this action!"
+            }
         }
 
         // check lecture status 
