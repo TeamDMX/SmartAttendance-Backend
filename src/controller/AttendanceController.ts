@@ -126,7 +126,7 @@ export class AttendanceController {
 
         // if this request is from a student
         if (lecturerId == undefined) {
-            if (session.userId !== studentId) {
+            if (session.data.userId !== studentId) {
                 throw {
                     status: false,
                     type: "perm",
@@ -134,7 +134,7 @@ export class AttendanceController {
                 };
             }
         } else {
-            if (lecturerId !== session.userId) {
+            if (lecturerId !== session.data.userId) {
                 throw {
                     status: false,
                     type: "perm",
