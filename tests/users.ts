@@ -6,9 +6,6 @@ import "mocha";
 chai.use(chaiHttp);
 const { expect } = chai;
 
-// ROUTE to send requests (path)
-const ROUTE = "/api/users";
-
 // add delay until app is started
 before(function (done) {
   setTimeout(function () {
@@ -20,7 +17,7 @@ describe("users: save", () => {
   it("should create a new user with id 99", function (done) {
     chai
       .request(app)
-      .post(ROUTE)
+      .post(`/api/users`)
       .set("content-type", "application/json; charset=utf-8")
       .send({
         "data": {
@@ -45,7 +42,7 @@ describe("users: get one", () => {
   it("should get the user info with id 99 as a object", function (done) {
     chai
       .request(app)
-      .get(`${ROUTE}?data[id]=99`)
+      .get(`/api/users/99`)
       .set("content-type", "application/json; charset=utf-8")
       .send()
       .end(function (err, res) {        
@@ -61,7 +58,7 @@ describe("users: get all", () => {
   it("should get an array with user data objects", function (done) {
     chai
       .request(app)
-      .get(ROUTE)
+      .get(`/api/users/search/ /99`)
       .set("content-type", "application/json; charset=utf-8")
       .send()
       .end(function (err, res) {
@@ -77,7 +74,7 @@ describe("users: delete", () => {
   it("should delete the user with id 99", function (done) {
     chai
       .request(app)
-      .delete(ROUTE)
+      .delete(`/api/users/99`)
       .set("content-type", "application/json; charset=utf-8")
       .send({
         "data": {

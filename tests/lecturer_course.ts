@@ -17,7 +17,7 @@ describe("lecturer course: get courses", () => {
     it("should get courses belong to lecturer with id 1", function (done) {
         chai
             .request(app)
-            .get(`/api/lecturer/courses?data[lecturerId]=1`)
+            .get(`/api/lecturer/1/courses`)
             .set("content-type", "application/json; charset=utf-8")
             .send()
             .end(function (err, res) {
@@ -33,7 +33,7 @@ describe("lecturer course: get lectures", () => {
     it("should get lectures belong to course with id 1", function (done) {
         chai
             .request(app)
-            .get(`/api/lecturer/lectures?data[courseId]=1`)
+            .get(`/api/lecturer/1/courses/1/lectures`)
             .set("content-type", "application/json; charset=utf-8")
             .send()
             .end(function (err, res) {
@@ -49,7 +49,7 @@ describe("lecturer course: save lecture", () => {
     it("should create a lecture with id 99", function (done) {
         chai
             .request(app)
-            .post(`/api/lecturer/lectures?data[courseId]=1`)
+            .post(`/api/lecturer/1/lectures`)
             .set("content-type", "application/json; charset=utf-8")
             .send({
                 "data": {
@@ -75,7 +75,7 @@ describe("lecturer course: delete lecture", () => {
     it("should delete the lecture with id 99", function (done) {
         chai
             .request(app)
-            .delete(`/api/lecturer/lectures`)
+            .delete(`/api/lecturer/1/lectures/99`)
             .set("content-type", "application/json; charset=utf-8")
             .send({
                 "data": {

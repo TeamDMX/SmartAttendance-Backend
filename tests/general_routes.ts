@@ -6,9 +6,6 @@ import "mocha";
 chai.use(chaiHttp);
 const { expect } = chai;
 
-// ROUTE to send requests (path)
-const ROUTE = "/api/general";
-
 // add delay until app is started
 before(function (done) {
 	setTimeout(function () {
@@ -20,7 +17,7 @@ describe("general: get table data", () => {
 	it("should get all rows in role table", function (done) {
 		chai
 			.request(app)
-			.get(`${ROUTE}?data[table]=role`)
+			.get(`/api/general/role`)
 			.set("content-type", "application/json; charset=utf-8")
 			.send()
 			.end(function (err, res) {
@@ -36,7 +33,7 @@ describe("general: get table data from non-general table", () => {
 	it("should send an error for student table", function (done) {
 		chai
 			.request(app)
-			.get(`${ROUTE}?data[table]=student`)
+			.get(`/api/general/student`)
 			.set("content-type", "application/json; charset=utf-8")
 			.send()
 			.end(function (err, res) {
@@ -49,7 +46,7 @@ describe("general: get table data from non-general table", () => {
 	it("should send an error for course table", function (done) {
 		chai
 			.request(app)
-			.get(`${ROUTE}?data[table]=course`)
+			.get(`/api/general/course`)
 			.set("content-type", "application/json; charset=utf-8")
 			.send()
 			.end(function (err, res) {
@@ -62,7 +59,7 @@ describe("general: get table data from non-general table", () => {
 	it("should send an error for a non-existing table", function (done) {
 		chai
 			.request(app)
-			.get(`${ROUTE}?data[table]=aafdasdad`)
+			.get(`/api/general/fafa`)
 			.set("content-type", "application/json; charset=utf-8")
 			.send()
 			.end(function (err, res) {

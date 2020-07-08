@@ -20,7 +20,7 @@ describe("regexes: get regexes for a module", () => {
     it("should get regexes for STUDENT module", function (done) {
         chai
             .request(app)
-            .get(`${ROUTE}?data[module]=STUDENT`)
+            .get(`${ROUTE}/STUDENT`)
             .set("content-type", "application/json; charset=utf-8")
             .send()
             .end(function (err, res) {
@@ -34,20 +34,7 @@ describe("regexes: get regexes for a module", () => {
     it("should send an error when given module not found", function (done) {
         chai
             .request(app)
-            .get(`${ROUTE}?data[module]=DUAAA`)
-            .set("content-type", "application/json; charset=utf-8")
-            .send()
-            .end(function (err, res) {
-                if (err) done(err);
-                expect(res.body.status).to.equal(false, "response status should be false.");
-                done();
-            });
-    });
-
-    it("should send an error when module is not provided", function (done) {
-        chai
-            .request(app)
-            .get(`${ROUTE}?data=`)
+            .get(`${ROUTE}/DUAAA`)
             .set("content-type", "application/json; charset=utf-8")
             .send()
             .end(function (err, res) {

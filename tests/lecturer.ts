@@ -6,9 +6,6 @@ import "mocha";
 chai.use(chaiHttp);
 const { expect } = chai;
 
-// ROUTE to send requests (path)
-const ROUTE = "/api/lecturers";
-
 // add delay until app is started
 before(function (done) {
   setTimeout(function () {
@@ -20,7 +17,7 @@ describe("lecturers: save", () => {
   it("should create a new lecturer with id 99", function (done) {
     chai
       .request(app)
-      .post(ROUTE)
+      .post(`/api/lecturers`)
       .set("content-type", "application/json; charset=utf-8")
       .send({
         "data": {
@@ -42,7 +39,7 @@ describe("lecturers: get one", () => {
   it("should get the lecturer info with id 99 as a object", function (done) {
     chai
       .request(app)
-      .get(`${ROUTE}?data[id]=99`)
+      .get(`/api/lecturers/99`)
       .set("content-type", "application/json; charset=utf-8")
       .send()
       .end(function (err, res) {
@@ -58,7 +55,7 @@ describe("lecturers: get all", () => {
   it("should get an array with lecturer data objects", function (done) {
     chai
       .request(app)
-      .get(ROUTE)
+      .get(`/api/lecturers/search/ /0`)
       .set("content-type", "application/json; charset=utf-8")
       .send()
       .end(function (err, res) {
@@ -74,7 +71,7 @@ describe("lecturers: delete", () => {
   it("should delete the lecturer with id 99", function (done) {
     chai
       .request(app)
-      .delete(ROUTE)
+      .delete(`/api/lecturers/99`)
       .set("content-type", "application/json; charset=utf-8")
       .send({
         "data": {
