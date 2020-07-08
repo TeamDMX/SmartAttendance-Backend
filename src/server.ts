@@ -218,7 +218,7 @@ app.route("/api/lecturers")
 // Routes:  Lecturer courses
 app.route("/api/lecturer/courses")
    .get((req, res) => {
-      LecturerCourseController.getCourses(req.query.data)
+      LecturerCourseController.getCourses(req.query.data, req.session)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
@@ -227,25 +227,25 @@ app.route("/api/lecturer/courses")
 // Routes:  Lecturer lectures
 app.route("/api/lecturer/lectures")
    .post((req, res) => {
-      LecturerCourseController.saveLecture(req.body.data)
+      LecturerCourseController.saveLecture(req.body.data, req.session)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    })
 
    .get((req, res) => {
-      LecturerCourseController.getLectures(req.query.data)
+      LecturerCourseController.getLectures(req.query.data, req.session)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    })
 
    .put((req, res) => {
-      LecturerCourseController.updateLecture(req.body.data)
+      LecturerCourseController.updateLecture(req.body.data, req.session)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    })
 
    .delete((req, res) => {
-      LecturerCourseController.deleteLecture(req.body.data)
+      LecturerCourseController.deleteLecture(req.body.data, req.session)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
@@ -305,7 +305,7 @@ app.route("/api/lectures")
 // Routes: Lecture Eligibility check for start making attendace 
 app.route("/api/lecture/check")
    .get((req, res) => {
-      LecturerCourseController.checkLectureMarkingEligibility(req.query.data)
+      LecturerCourseController.checkLectureMarkingEligibility(req.query.data, req.session)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    })
