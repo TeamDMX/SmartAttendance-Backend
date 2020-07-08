@@ -59,7 +59,7 @@ describe("lectures: get all", () => {
   it("should get an array with lecture data objects", function (done) {
     chai
       .request(app)
-      .get(`/api/lectures/search/ /0`)
+      .get(`/api/lectures/search/ /skip/0`)
       .set("content-type", "application/json; charset=utf-8")
       .send()
       .end(function (err, res) {

@@ -56,7 +56,7 @@ describe("students: get all", () => {
   it("should get an array with student data objects", function (done) {
     chai
       .request(app)
-      .get(`/api/students/search/ /99`)
+      .get(`/api/students/search/ /skip/0`)
       .set("content-type", "application/json; charset=utf-8")
       .send()
       .end(function (err, res) {

@@ -55,7 +55,7 @@ describe("lecture halls: get all", () => {
   it("should get an array with lecture hall data objects", function (done) {
     chai
       .request(app)
-      .get(`/api/lecture_halls/search/ /0`)
+      .get(`/api/lecture_halls/search/ /skip/0`)
       .set("content-type", "application/json; charset=utf-8")
       .send()
       .end(function (err, res) {

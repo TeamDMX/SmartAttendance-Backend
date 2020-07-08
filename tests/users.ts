@@ -58,7 +58,7 @@ describe("users: get all", () => {
   it("should get an array with user data objects", function (done) {
     chai
       .request(app)
-      .get(`/api/users/search/ /99`)
+      .get(`/api/users/search/ /skip/0`)
       .set("content-type", "application/json; charset=utf-8")
       .send()
       .end(function (err, res) {
