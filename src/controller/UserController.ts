@@ -8,20 +8,13 @@ import { ValidationUtil } from "../util/ValidationUtil";
 import * as crypto from "crypto";
 
 export class UserController {
-    static async get(data) {
-        if (data !== undefined && data.id) {
-            return this.getOne(data);
-        } else {
-            return this.search(data);
-        }
-    }
 
-    private static async getOne({ id }) {
+    static async getOne(studentId: number) {
         // check if valid data is given
-        await ValidationUtil.validate("USER", { id });
+        await ValidationUtil.validate("USER", { studentId });
 
         // search for an entry with given id
-        const entry = await UserDao.getOne(id)
+        const entry = await UserDao.getOne(studentId)
 
         // check if entry exists
         if (entry !== undefined) {
@@ -38,8 +31,8 @@ export class UserController {
         }
     }
 
-    private static async search(data = {}) {
-        const entries = await UserDao.search(data).catch(e => {
+    static async getMany(keyword: string, skip: number) {
+        const entries = await UserDao.search(keyword, skip).catch(e => {
             console.log(e.code, e);
             throw {
                 status: false,
@@ -108,9 +101,10 @@ export class UserController {
         };
     }
 
-    static async update(data) {
+    static async update(userId: number, data) {
         // create entry object
         const editedEntry = data as User;
+        editedEntry.id = userId;
 
         // check if valid data is given
         await ValidationUtil.validate("USER", editedEntry);
@@ -149,12 +143,12 @@ export class UserController {
         };
     }
 
-    static async delete({ id }) {
+    static async delete(userId: number) {
         // check if valid data is given
-        await ValidationUtil.validate("USER", { id });
+        await ValidationUtil.validate("USER", userId);
 
         // find the entry with the given id
-        const entry = await getRepository(User).findOne({ id: id }).catch(e => {
+        const entry = await getRepository(User).findOne({ id: userId }).catch(e => {
             console.log(e.code, e);
             throw {
                 status: false,

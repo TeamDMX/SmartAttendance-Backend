@@ -6,21 +6,13 @@ import { LecturerDao } from "../dao/LecturerDao";
 import { ValidationUtil } from "../util/ValidationUtil";
 
 export class LecturerController {
-    static async get(data) {
-        if (data !== undefined && data.id) {
-            return this.getOne(data);
-        } else {
-            return this.search(data);
-        }
-    }
-
-    private static async getOne({ id }) {
+    static async getOne(courseId: number) {
         // check if valid data is given
-        await ValidationUtil.validate("LECTURER", { id });
+        await ValidationUtil.validate("LECTURER", { courseId });
 
         // search for an entry with given id
         const entry = await getRepository(Lecturer).findOne({
-            where: { id: id }
+            where: { id: courseId }
         }).catch(e => {
             console.log(e.code, e);
             throw {
@@ -45,8 +37,13 @@ export class LecturerController {
         }
     }
 
-    private static async search(data = {}) {
-        const entries = await LecturerDao.search(data).catch(e => {
+    static async getMany(keyword: string, skip: number) {
+
+        if (keyword.trim() == "") {
+            keyword = ""
+        }
+
+        const entries = await LecturerDao.search(keyword, skip).catch(e => {
             console.log(e.code, e);
             throw {
                 status: false,
@@ -91,9 +88,10 @@ export class LecturerController {
         };
     }
 
-    static async update(data) {
+    static async update(courseId: number, data) {
         // create entry object
         const editedEntry = data as Lecturer;
+        editedEntry.id = courseId;
 
         // check if valid data is given
         await ValidationUtil.validate("LECTURER", editedEntry);
@@ -132,12 +130,12 @@ export class LecturerController {
         };
     }
 
-    static async delete({ id }) {
+    static async delete(courseId: number) {
         // check if valid data is given
-        await ValidationUtil.validate("LECTURER", { id });
+        await ValidationUtil.validate("LECTURER", { courseId });
 
         // find the entry with the given id
-        const entry = await getRepository(Lecturer).findOne({ id: id }).catch(e => {
+        const entry = await getRepository(Lecturer).findOne({ id: courseId }).catch(e => {
             console.log(e.code, e);
             throw {
                 status: false,

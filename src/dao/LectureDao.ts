@@ -2,7 +2,7 @@ import { getRepository } from "typeorm";
 import { Lecture } from "../entity/Lecture";
 
 export class LectureDao {
-    static search({ keyword = "", skip = 0 }) {
+    static search(keyword: String, skip: number) {
         return getRepository(Lecture)
             .createQueryBuilder("r")
             .leftJoinAndSelect("r.course", "c")

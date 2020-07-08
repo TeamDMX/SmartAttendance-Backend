@@ -7,21 +7,14 @@ import { LectureHallDao } from "../dao/LectureHallDao";
 import { ValidationUtil } from "../util/ValidationUtil";
 
 export class LectureHallController {
-    static async get(data) {
-        if (data !== undefined && data.id) {
-            return this.getOne(data);
-        } else {
-            return this.search(data);
-        }
-    }
 
-    private static async getOne({ id }) {
+    static async getOne(lectureHallId: number) {
         // check if valid data is given
-        await ValidationUtil.validate("LECTURE_HALL", { id });
+        await ValidationUtil.validate("LECTURE_HALL", { id: lectureHallId });
 
         // search for an entry with given id
         const entry = await getRepository(LectureHall).findOne({
-            where: { id: id }
+            where: { id: lectureHallId }
         }).catch(e => {
             console.log(e.code, e);
             throw {
@@ -46,8 +39,13 @@ export class LectureHallController {
         }
     }
 
-    private static async search(data = {}) {
-        const entries = await LectureHallDao.search(data).catch(e => {
+    static async getMany(keyword: string, skip: number) {
+
+        if (keyword.trim() == "") {
+            keyword = ""
+        }
+
+        const entries = await LectureHallDao.search(keyword, skip).catch(e => {
             console.log(e.code, e);
             throw {
                 status: false,
@@ -92,9 +90,10 @@ export class LectureHallController {
         };
     }
 
-    static async update(data) {
+    static async update(lectureHallId: number, data) {
         // create entry object
         const editedEntry = data as LectureHall;
+        editedEntry.id = lectureHallId;
 
         // check if valid data is given
         await ValidationUtil.validate("LECTURE_HALL", editedEntry);
@@ -133,12 +132,12 @@ export class LectureHallController {
         };
     }
 
-    static async delete({ id }) {
+    static async delete(lectureHallId: number) {
         // check if valid data is given
-        await ValidationUtil.validate("LECTURE_HALL", { id });
+        await ValidationUtil.validate("LECTURE_HALL", { lectureHallId });
 
         // find the entry with the given id
-        const entry = await getRepository(LectureHall).findOne({ id: id }).catch(e => {
+        const entry = await getRepository(LectureHall).findOne({ id: lectureHallId }).catch(e => {
             console.log(e.code, e);
             throw {
                 status: false,

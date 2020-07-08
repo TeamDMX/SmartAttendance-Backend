@@ -6,21 +6,14 @@ import { StudentDao } from "../dao/StudentDao";
 import { ValidationUtil } from "../util/ValidationUtil";
 
 export class StudentController {
-    static async get(data) {
-        if (data !== undefined && data.id) {
-            return this.getOne(data);
-        } else {
-            return this.search(data);
-        }
-    }
 
-    private static async getOne({ id }) {
+    static async getOne(studentId: number) {
         // check if valid data is given
-        await ValidationUtil.validate("STUDENT", { id });
+        await ValidationUtil.validate("STUDENT", { studentId });
 
         // search for an entry with given id
         const entry = await getRepository(Student).findOne({
-            where: { id: id }
+            where: { id: studentId }
         }).catch(e => {
             console.log(e.code, e);
             throw {
@@ -45,8 +38,8 @@ export class StudentController {
         }
     }
 
-    private static async search(data = {}) {
-        const entries = await StudentDao.search(data).catch(e => {
+    static async getMany(keyword: string, skip: number) {
+        const entries = await StudentDao.search(keyword, skip).catch(e => {
             console.log(e.code, e);
             throw {
                 status: false,
@@ -91,9 +84,10 @@ export class StudentController {
         };
     }
 
-    static async update(data) {
+    static async update(studentId: number, data) {
         // create entry object
         const editedEntry = data as Student;
+        editedEntry.id = studentId;
 
         // check if valid data is given
         await ValidationUtil.validate("STUDENT", editedEntry);
@@ -132,12 +126,12 @@ export class StudentController {
         };
     }
 
-    static async delete({ id }) {
+    static async delete(studentId: number) {
         // check if valid data is given
-        await ValidationUtil.validate("STUDENT", { id });
+        await ValidationUtil.validate("STUDENT", { studentId });
 
         // find the entry with the given id
-        const entry = await getRepository(Student).findOne({ id: id }).catch(e => {
+        const entry = await getRepository(Student).findOne({ id: studentId }).catch(e => {
             console.log(e.code, e);
             throw {
                 status: false,

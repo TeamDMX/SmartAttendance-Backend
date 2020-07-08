@@ -107,7 +107,9 @@ if (process.env.PRODUCTION == "false") {
          username: "admin",
          logged: true,
          userRoles: [{ id: 1 }],
-         userId: 1
+         userId: 1,
+         lecturerId: 1,
+         studentId: undefined
       };
       next();
    });
@@ -138,145 +140,187 @@ app.route("/api/logout")
    });
 
 // Routes:  Course Routes
+app.route("/api/courses/search/:keyword/:skip")
+   .get((req, res) => {
+      CourseController.getMany(req.params.keyword, parseInt(req.params.skip))
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
 app.route("/api/courses")
    .post((req, res) => {
       CourseController.save(req.body.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
-   })
+   });
 
+app.route("/api/courses/:courseId")
    .get((req, res) => {
-      CourseController.get(req.query.data)
-         .then(r => res.json(r))
-         .catch(e => res.json(e));
-   })
-
-   .put((req, res) => {
-      CourseController.update(req.body.data)
+      CourseController.getOne(parseInt(req.params.courseId))
          .then(r => res.json(r))
          .catch(e => res.json(e));
    })
 
    .delete((req, res) => {
-      CourseController.delete(req.body.data)
+      CourseController.delete(parseInt(req.params.courseId))
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .put((req, res) => {
+      CourseController.update(parseInt(req.params.courseId), req.body.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
 
 // Routes:  Students Routes
+app.route("/api/students/search/:keyword/:skip")
+   .get((req, res) => {
+      StudentController.getMany(req.params.keyword, parseInt(req.params.skip))
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
 app.route("/api/students")
    .post((req, res) => {
       StudentController.save(req.body.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
-   })
+   });
 
+app.route("/api/students/:studentId")
    .get((req, res) => {
-      StudentController.get(req.query.data)
-         .then(r => res.json(r))
-         .catch(e => res.json(e));
-   })
-
-   .put((req, res) => {
-      StudentController.update(req.body.data)
+      StudentController.getOne(parseInt(req.params.studentId))
          .then(r => res.json(r))
          .catch(e => res.json(e));
    })
 
    .delete((req, res) => {
-      StudentController.delete(req.body.data)
+      StudentController.delete(parseInt(req.params.studentId))
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .put((req, res) => {
+      StudentController.update(parseInt(req.params.studentId), req.body.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
 
 // Routes:  Lecturer Routes
+app.route("/api/lecturers/search/:keyword/:skip")
+   .get((req, res) => {
+      LecturerController.getMany(req.params.keyword, parseInt(req.params.skip))
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
 app.route("/api/lecturers")
    .post((req, res) => {
       LecturerController.save(req.body.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
-   })
+   });
 
+app.route("/api/lecturers/:lecturerId")
    .get((req, res) => {
-      LecturerController.get(req.query.data)
-         .then(r => res.json(r))
-         .catch(e => res.json(e));
-   })
-
-   .put((req, res) => {
-      LecturerController.update(req.body.data)
+      LecturerController.getOne(parseInt(req.params.lecturerId))
          .then(r => res.json(r))
          .catch(e => res.json(e));
    })
 
    .delete((req, res) => {
-      LecturerController.delete(req.body.data)
+      LecturerController.delete(parseInt(req.params.lecturerId))
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .put((req, res) => {
+      LecturerController.update(parseInt(req.params.lecturerId), req.body.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
 
-// Routes:  Lecturer courses
-app.route("/api/lecturer/courses")
+
+
+// Routes:  Lecturer Materials
+app.route("/api/lecturer/:lecturerId/courses")
    .get((req, res) => {
-      LecturerCourseController.getCourses(req.query.data, req.session)
+      LecturerCourseController.getCourses(parseInt(req.params.lecturerId), req.session)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
 
+app.route("/api/lecturer/:lecturerId/courses/:courseId/lectures")
+   .get((req, res) => {
+      LecturerCourseController.getLectures(parseInt(req.params.lecturerId), parseInt(req.params.courseId), req.session)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
 
-// Routes:  Lecturer lectures
-app.route("/api/lecturer/lectures")
+app.route("/api/lecturer/:lecturerId/lectures")
    .post((req, res) => {
-      LecturerCourseController.saveLecture(req.body.data, req.session)
+      LecturerCourseController.saveLecture(parseInt(req.params.lecturerId), req.body.data, req.session)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    })
 
-   .get((req, res) => {
-      LecturerCourseController.getLectures(req.query.data, req.session)
-         .then(r => res.json(r))
-         .catch(e => res.json(e));
-   })
-
+app.route("/api/lecturer/:lecturerId/lectures/:lectureId")
    .put((req, res) => {
-      LecturerCourseController.updateLecture(req.body.data, req.session)
+      LecturerCourseController.updateLecture(parseInt(req.params.lecturerId), parseInt(req.params.lectureId), req.body.data, req.session)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    })
 
    .delete((req, res) => {
-      LecturerCourseController.deleteLecture(req.body.data, req.session)
+      LecturerCourseController.deleteLecture(parseInt(req.params.lecturerId), parseInt(req.params.lectureId), req.session)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
+
 
 // Routes:  Users
+app.route("/api/users/search/:keyword/:skip")
+   .get((req, res) => {
+      UserController.getMany(req.params.keyword, parseInt(req.params.skip))
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
 app.route("/api/users")
    .post((req, res) => {
       UserController.save(req.body.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
-   })
+   });
 
+app.route("/api/users/:userId")
    .get((req, res) => {
-      UserController.get(req.query.data)
-         .then(r => res.json(r))
-         .catch(e => res.json(e));
-   })
-
-   .put((req, res) => {
-      UserController.update(req.body.data)
+      UserController.getOne(parseInt(req.params.userId))
          .then(r => res.json(r))
          .catch(e => res.json(e));
    })
 
    .delete((req, res) => {
-      UserController.delete(req.body.data)
+      UserController.delete(parseInt(req.params.userId))
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .put((req, res) => {
+      UserController.update(parseInt(req.params.userId), req.body.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
 
 // Routes:  Lectures
+app.route("/api/lectures/search/:keyword/:skip")
+   .get((req, res) => {
+      LectureController.getMany(req.params.keyword, parseInt(req.params.skip))
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
 app.route("/api/lectures")
    .post((req, res) => {
       LectureController.save(req.body.data)
@@ -284,54 +328,64 @@ app.route("/api/lectures")
          .catch(e => res.json(e));
    })
 
+app.route("/api/lectures/:lectureId")
    .get((req, res) => {
-      LectureController.get(req.query.data)
-         .then(r => res.json(r))
-         .catch(e => res.json(e));
-   })
-
-   .put((req, res) => {
-      LectureController.update(req.body.data)
+      LectureController.getOne(parseInt(req.params.lectureId))
          .then(r => res.json(r))
          .catch(e => res.json(e));
    })
 
    .delete((req, res) => {
-      LectureController.delete(req.body.data)
-         .then(r => res.json(r))
-         .catch(e => res.json(e));
-   });
-
-// Routes: Lecture Eligibility check for start making attendace 
-app.route("/api/lecture/check")
-   .get((req, res) => {
-      LecturerCourseController.checkLectureMarkingEligibility(req.query.data, req.session)
+      LectureController.delete(parseInt(req.params.lectureId))
          .then(r => res.json(r))
          .catch(e => res.json(e));
    })
 
+   .put((req, res) => {
+      LectureController.update(parseInt(req.params.lectureId), req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
+// // Routes: Lecture Eligibility check for start making attendace 
+// app.route("/api/lecture/check")
+//    .get((req, res) => {
+//       LecturerCourseController.checkLectureMarkingEligibility(req.query.data, req.session)
+//          .then(r => res.json(r))
+//          .catch(e => res.json(e));
+//    })
+
 // Routes:  Lecture Halls
+app.route("/api/lecture_halls/search/:keyword/:skip")
+   .get((req, res) => {
+      LectureHallController.getMany(req.params.keyword, parseInt(req.params.skip))
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
+
 app.route("/api/lecture_halls")
    .post((req, res) => {
       LectureHallController.save(req.body.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
-   })
+   });
 
+app.route("/api/lecture_halls/:lectureHallId")
    .get((req, res) => {
-      LectureHallController.get(req.query.data)
-         .then(r => res.json(r))
-         .catch(e => res.json(e));
-   })
-
-   .put((req, res) => {
-      LectureHallController.update(req.body.data)
+      LectureHallController.getOne(parseInt(req.params.lectureHallId))
          .then(r => res.json(r))
          .catch(e => res.json(e));
    })
 
    .delete((req, res) => {
-      LectureHallController.delete(req.body.data)
+      LectureHallController.delete(parseInt(req.params.lectureHallId))
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .put((req, res) => {
+      LectureHallController.update(parseInt(req.params.lectureHallId), req.body.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
@@ -346,17 +400,17 @@ app.route("/api/attendances")
    });
 
 // Routes: Regexes
-app.route("/api/regexes")
+app.route("/api/regexes/:moduleName")
    .get((req, res) => {
-      RegexPatternUtil.getModuleRegex(req.query.data.module)
+      RegexPatternUtil.getModuleRegex(req.params.moduleName)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
 
 // Routes:  General routes for data tables
-app.route("/api/general")
+app.route("/api/general/:tableName")
    .get((req, res) => {
-      GeneralController.get(req.query.data)
+      GeneralController.get(req.params.tableName)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });

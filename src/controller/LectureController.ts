@@ -6,21 +6,15 @@ import { LectureDao } from "../dao/LectureDao";
 import { ValidationUtil } from "../util/ValidationUtil";
 
 export class LectureController {
-    static async get(data) {
-        if (data !== undefined && data.id) {
-            return this.getOne(data);
-        } else {
-            return this.search(data);
-        }
-    }
 
-    private static async getOne({ id }) {
+    static async getOne(lectureId: number) {
+
         // check if valid data is given
-        await ValidationUtil.validate("LECTURE", { id });
+        await ValidationUtil.validate("LECTURE", { id: lectureId });
 
         // search for an entry with given id
         const entry = await getRepository(Lecture).findOne({
-            where: { id: id }
+            where: { id: lectureId }
         }).catch(e => {
             console.log(e.code, e);
             throw {
@@ -45,8 +39,13 @@ export class LectureController {
         }
     }
 
-    private static async search(data = {}) {
-        const entries = await LectureDao.search(data).catch(e => {
+    static async getMany(keyword: string, skip: number) {
+        
+        if (keyword.trim() == "") {
+            keyword = ""
+        }
+        
+        const entries = await LectureDao.search(keyword, skip).catch(e => {
             console.log(e.code, e);
             throw {
                 status: false,
@@ -91,10 +90,11 @@ export class LectureController {
         };
     }
 
-    static async update(data) {
+    static async update(lectureId: number, data) {
         // create entry object
         const editedEntry = data as Lecture;
-
+        editedEntry.id = lectureId;
+        
         // check if valid data is given
         await ValidationUtil.validate("LECTURE", editedEntry);
 
@@ -112,7 +112,7 @@ export class LectureController {
             throw {
                 status: false,
                 type: "input",
-                msg: "That entry doesn't exist in our database!."
+                msg: "Entry with that id doesn't exist!"
             }
         }
 
@@ -132,12 +132,12 @@ export class LectureController {
         };
     }
 
-    static async delete({ id }) {
+    static async delete(lectureId: number) {
         // check if valid data is given
-        await ValidationUtil.validate("LECTURE", { id });
+        await ValidationUtil.validate("LECTURE", { id: lectureId });
 
         // find the entry with the given id
-        const entry = await getRepository(Lecture).findOne({ id: id }).catch(e => {
+        const entry = await getRepository(Lecture).findOne({ id: lectureId }).catch(e => {
             console.log(e.code, e);
             throw {
                 status: false,

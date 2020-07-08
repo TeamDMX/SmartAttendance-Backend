@@ -1,14 +1,12 @@
 import { getRepository } from "typeorm";
 
 export class GeneralController {
-    static async get(data) {
+    static async get(tableName: string) {
 
         const generalTables = ["user_type", "role"];
 
-        const table = data.table;
-
         // check if table name is given
-        if (!table) {
+        if (!tableName) {
             throw {
                 status: false,
                 type: "input",
@@ -16,7 +14,7 @@ export class GeneralController {
             };
         }
 
-        if (!generalTables.includes(table)) {
+        if (!generalTables.includes(tableName)) {
             throw {
                 status: false,
                 type: "input",
@@ -24,7 +22,7 @@ export class GeneralController {
             };
         }
 
-        const entries = await getRepository(table).find()
+        const entries = await getRepository(tableName).find()
             .catch(() => {
                 throw {
                     status: false,
