@@ -34,6 +34,7 @@ import { AttendanceController } from "./controller/AttendanceController"
 import { RegexPatternUtil } from "./util/RegexPatternUtil"
 import { AuthController } from "./controller/AuthController"
 import { LecturerCourseController } from "./controller/LecturerCourseController"
+import { ProfileController } from "./controller/ProfileController"
 
 /* 
 =====================================================================================
@@ -139,8 +140,17 @@ app.route("/api/logout")
          .catch(e => res.json(e));
    });
 
+// Routes: Profile (Get the profile of currently logged in user)
+app.route("/api/profile")
+   .get((req, res) => {
+      ProfileController.getOne(req.session)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
+
 // Routes:  Course Routes
-app.route("/api/courses/search/:keyword/:skip")
+app.route("/api/courses/search/:keyword/skip/:skip")
    .get((req, res) => {
       CourseController.getMany(req.params.keyword, parseInt(req.params.skip))
          .then(r => res.json(r))
@@ -174,7 +184,7 @@ app.route("/api/courses/:courseId")
    });
 
 // Routes:  Students Routes
-app.route("/api/students/search/:keyword/:skip")
+app.route("/api/students/search/:keyword/skip/:skip")
    .get((req, res) => {
       StudentController.getMany(req.params.keyword, parseInt(req.params.skip))
          .then(r => res.json(r))
@@ -208,7 +218,7 @@ app.route("/api/students/:studentId")
    });
 
 // Routes:  Lecturer Routes
-app.route("/api/lecturers/search/:keyword/:skip")
+app.route("/api/lecturers/search/:keyword/skip/:skip")
    .get((req, res) => {
       LecturerController.getMany(req.params.keyword, parseInt(req.params.skip))
          .then(r => res.json(r))
@@ -280,7 +290,7 @@ app.route("/api/lecturer/:lecturerId/lectures/:lectureId")
 
 
 // Routes:  Users
-app.route("/api/users/search/:keyword/:skip")
+app.route("/api/users/search/:keyword/skip/:skip")
    .get((req, res) => {
       UserController.getMany(req.params.keyword, parseInt(req.params.skip))
          .then(r => res.json(r))
@@ -314,7 +324,7 @@ app.route("/api/users/:userId")
    });
 
 // Routes:  Lectures
-app.route("/api/lectures/search/:keyword/:skip")
+app.route("/api/lectures/search/:keyword/skip/:skip")
    .get((req, res) => {
       LectureController.getMany(req.params.keyword, parseInt(req.params.skip))
          .then(r => res.json(r))
@@ -356,7 +366,7 @@ app.route("/api/lectures/:lectureId")
 //    })
 
 // Routes:  Lecture Halls
-app.route("/api/lecture_halls/search/:keyword/:skip")
+app.route("/api/lecture_halls/search/:keyword/skip/:skip")
    .get((req, res) => {
       LectureHallController.getMany(req.params.keyword, parseInt(req.params.skip))
          .then(r => res.json(r))
