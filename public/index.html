@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./jquery-3.5.1.min.js"></script>
+    <script src="./qrcode.min.js"></script>
+</head>
+
+<body>
+    <div id="qrcode">
+
+    </div>
+
+    <script>
+        window.addEventListener("load", function () {
+            const socket = io("/api/attendance?lecture_id=1");
+
+            socket.on('connect', () => {
+                console.log("connected");   
+            });
+
+            let qr = null;
+            socket.on('code', function (data) {
+                if (qr == null) {
+                    qr = new QRCode(document.getElementById("qrcode"), data.toString());
+                } else {
+                    qr.clear();
+                    qr.makeCode(data.toString());
+                }
+                console.log(data);
+            });
+
+            socket.on('newMarking', function (data) {
+                console.log(data);
+            });
+
+            socket.on('error', function (data) {
+                console.log(data);
+            });
+
+        })
+    </script>
+</body>
+
+</html>
