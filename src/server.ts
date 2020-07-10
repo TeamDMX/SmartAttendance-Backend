@@ -254,28 +254,28 @@ app.route("/api/lecturers/:lecturerId")
 
 
 // Routes:  Lecturer Materials
-app.route("/api/lecturer/:lecturerId/courses")
+app.route("/api/lecturers/:lecturerId/courses")
    .get((req, res) => {
       LecturerCourseController.getCourses(parseInt(req.params.lecturerId), req.session)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
 
-app.route("/api/lecturer/:lecturerId/courses/:courseId/lectures")
+app.route("/api/lecturers/:lecturerId/courses/:courseId/lectures")
    .get((req, res) => {
       LecturerCourseController.getLectures(parseInt(req.params.lecturerId), parseInt(req.params.courseId), req.session)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
 
-app.route("/api/lecturer/:lecturerId/lectures")
+app.route("/api/lecturers/:lecturerId/lectures")
    .post((req, res) => {
       LecturerCourseController.saveLecture(parseInt(req.params.lecturerId), req.body.data, req.session)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    })
 
-app.route("/api/lecturer/:lecturerId/lectures/:lectureId")
+app.route("/api/lecturers/:lecturerId/lectures/:lectureId")
    .put((req, res) => {
       LecturerCourseController.updateLecture(parseInt(req.params.lecturerId), parseInt(req.params.lectureId), req.body.data, req.session)
          .then(r => res.json(r))
