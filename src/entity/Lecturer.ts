@@ -5,6 +5,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { Lecture } from "./Lecture";
 import { LecturerCourse } from "./LecturerCourse";
 import { User } from "./User";
 
@@ -19,6 +20,9 @@ export class Lecturer {
 
   @Column("varchar", { name: "name", length: 64 })
   name: string;
+
+  @OneToMany(() => Lecture, (lecture) => lecture.lecturer)
+  lectures: Lecture[];
 
   @OneToMany(() => LecturerCourse, (lecturerCourse) => lecturerCourse.lecturer)
   lecturerCourses: LecturerCourse[];

@@ -11,10 +11,12 @@ import { Attendance } from "./Attendance";
 import { Course } from "./Course";
 import { LectureHall } from "./LectureHall";
 import { LectureStatus } from "./LectureStatus";
+import { Lecturer } from "./Lecturer";
 
 @Index("fk_lecture_lecture_hall1_idx", ["lectureHallId"], {})
 @Index("fk_lecture_course1_idx", ["courseId"], {})
 @Index("fk_lecture_lecture_status1_idx", ["lectureStatusId"], {})
+@Index("fk_lecture_lecturer1_idx", ["lecturerId"], {})
 @Entity("lecture", { schema: "smart_attendance" })
 export class Lecture {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
@@ -41,6 +43,9 @@ export class Lecture {
   @Column("int", { name: "lecture_status_id" })
   lectureStatusId: number;
 
+  @Column("int", { name: "lecturer_id" })
+  lecturerId: number;
+
   @OneToMany(() => Attendance, (attendance) => attendance.lecture)
   attendances: Attendance[];
 
@@ -64,4 +69,11 @@ export class Lecture {
   })
   @JoinColumn([{ name: "lecture_status_id", referencedColumnName: "id" }])
   lectureStatus: LectureStatus;
+
+  @ManyToOne(() => Lecturer, (lecturer) => lecturer.lectures, {
+    onDelete: "NO ACTION",
+    onUpdate: "NO ACTION",
+  })
+  @JoinColumn([{ name: "lecturer_id", referencedColumnName: "id" }])
+  lecturer: Lecturer;
 }
