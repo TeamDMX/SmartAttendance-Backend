@@ -115,7 +115,7 @@ dist
 .pnp.*
 
 !sample.env
-nodemon.json
+# nodemon.json
 
 # ignore vscode http requests folder
 http
