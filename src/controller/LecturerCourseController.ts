@@ -17,6 +17,7 @@ export class LecturerCourseController {
                 msg: "You don't have permission to perform this action!"
             }
         }
+        
 
         const entries = await getRepository(LecturerCourse).find({
             where: { lecturerId: lecturerId },
@@ -80,7 +81,7 @@ export class LecturerCourseController {
 
         const entries = await getRepository(Lecture).find({
             where: { courseId: courseId },
-            relations: ["lectureStatus"],
+            relations: ["lectureStatus", "lectureHall"],
             order: {
                 "startDatetime": "DESC"
             }
