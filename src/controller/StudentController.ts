@@ -2,6 +2,7 @@ require("dotenv").config();
 
 import { getRepository } from "typeorm";
 import { Student } from "../entity/Student";
+import { StudentCourse } from "../entity/StudentCourse";
 import { StudentDao } from "../dao/StudentDao";
 import { ValidationUtil } from "../util/ValidationUtil";
 
@@ -13,7 +14,8 @@ export class StudentController {
 
         // search for an entry with given id
         const entry = await getRepository(Student).findOne({
-            where: { id: studentId }
+            where: { id: studentId },
+            relations: ["studentCourses"]
         }).catch(e => {
             console.log(e.code, e);
             throw {
@@ -55,11 +57,37 @@ export class StudentController {
     }
 
     static async save(data) {
+        // check if valid data is given
+        await ValidationUtil.validate("STUDENT", data);
+
         // create entry object
         const entry = data as Student;
 
-        // check if valid data is given
-        await ValidationUtil.validate("STUDENT", entry);
+        try {
+            await getRepository(Student).save(entry);
+
+            // parse course ids
+            const courseIds = data.courseIds.split(",");
+
+            // save course ids
+            for (let courseId of courseIds) {
+                await getRepository(StudentCourse).save({ studentId: entry.id, courseId: courseId });
+            }
+        } catch (e) {
+            if (e.code == "ER_DUP_ENTRY") {
+                throw {
+                    status: false,
+                    type: "input",
+                    msg: "Entry already exists!."
+                }
+            }
+
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            }
+        }
 
         await getRepository(Student).save(entry).catch(e => {
             console.log(e.code, e);
@@ -85,12 +113,13 @@ export class StudentController {
     }
 
     static async update(studentId: number, data) {
-        // create entry object
-        const editedEntry = data as Student;
-        editedEntry.id = studentId;
+        data.id = studentId;
 
         // check if valid data is given
-        await ValidationUtil.validate("STUDENT", editedEntry);
+        await ValidationUtil.validate("STUDENT", data);
+
+        // create entry object
+        const editedEntry = data as Student;
 
         // check if an entry is present with the given id
         const selectedEntry = await getRepository(Student).findOne(editedEntry.id).catch(e => {
@@ -110,15 +139,29 @@ export class StudentController {
             }
         }
 
-        // update entry
-        await getRepository(Student).save(editedEntry).catch(e => {
+
+        try {
+            // update entry
+            await getRepository(Student).save(editedEntry);
+
+            // parse course ids
+            const courseIds = data.courseIds.split(",");
+
+            // delete exisiting lecturer courses
+            await getRepository(StudentCourse).delete({ studentId: editedEntry.id });
+
+            // update student courses
+            for (let courseId of courseIds) {
+                await getRepository(StudentCourse).save({ studentId: editedEntry.id, courseId: courseId });
+            }
+        } catch (e) {
             console.log(e.code, e);
             throw {
                 status: false,
                 type: "server",
                 msg: "Server Error!. Please check logs."
             }
-        });
+        }
 
         return {
             status: true,
