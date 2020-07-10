@@ -13,5 +13,10 @@
     "regex": "/^[\\w\\s\\-\\/]{5,100}$/",
     "attribute": "name",
     "error": "Please provide a valid name!."
+  },
+  {
+    "regex": "/^[1-8](,[1-8])*$/",
+    "attribute": "courseIds",
+    "error": "Please provide valid courses!"
   }
 ]

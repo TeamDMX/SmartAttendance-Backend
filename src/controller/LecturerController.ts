@@ -2,6 +2,7 @@ require("dotenv").config();
 
 import { getRepository } from "typeorm";
 import { Lecturer } from "../entity/Lecturer";
+import { LecturerCourse } from "../entity/LecturerCourse";
 import { LecturerDao } from "../dao/LecturerDao";
 import { ValidationUtil } from "../util/ValidationUtil";
 
@@ -12,7 +13,9 @@ export class LecturerController {
 
         // search for an entry with given id
         const entry = await getRepository(Lecturer).findOne({
-            where: { id: courseId }
+            where: { id: courseId },
+            relations: ["lecturerCourses"]
+            
         }).catch(e => {
             console.log(e.code, e);
             throw {
@@ -59,14 +62,24 @@ export class LecturerController {
     }
 
     static async save(data) {
+        // check if valid data is given
+        await ValidationUtil.validate("LECTURER", data);
+
         // create entry object
         const entry = data as Lecturer;
 
-        // check if valid data is given
-        await ValidationUtil.validate("LECTURER", entry);
+        try {
+            await getRepository(Lecturer).save(entry);
 
-        await getRepository(Lecturer).save(entry).catch(e => {
-            console.log(e.code, e);
+            // parse course ids
+            const courseIds = data.courseIds.split(",");
+
+            // save course ids
+            for (let courseId of courseIds) {
+                await getRepository(LecturerCourse).save({ lecturerId: entry.id, courseId: courseId });
+            }
+
+        } catch (e) {
 
             if (e.code == "ER_DUP_ENTRY") {
                 throw {
@@ -75,12 +88,13 @@ export class LecturerController {
                     msg: "Entry already exists!."
                 }
             }
+
             throw {
                 status: false,
                 type: "server",
                 msg: "Server Error!. Please check logs."
             }
-        });
+        }
 
         return {
             status: true,
@@ -89,12 +103,13 @@ export class LecturerController {
     }
 
     static async update(courseId: number, data) {
-        // create entry object
-        const editedEntry = data as Lecturer;
-        editedEntry.id = courseId;
+        data.id = courseId;
 
         // check if valid data is given
-        await ValidationUtil.validate("LECTURER", editedEntry);
+        await ValidationUtil.validate("LECTURER", data);
+
+        // create entry object
+        const editedEntry = data as Lecturer;
 
         // check if an entry is present with the given id
         const selectedEntry = await getRepository(Lecturer).findOne(editedEntry.id).catch(e => {
@@ -114,15 +129,28 @@ export class LecturerController {
             }
         }
 
-        // update entry
-        await getRepository(Lecturer).save(editedEntry).catch(e => {
-            console.log(e.code, e);
+        try {
+            // update entry
+            await getRepository(Lecturer).save(editedEntry);
+
+            // parse course ids
+            const courseIds = data.courseIds.split(",");
+
+            // delete exisiting lecturer courses
+            await getRepository(LecturerCourse).delete({ lecturerId: editedEntry.id });
+
+            // update lecturer coruses
+            for (let courseId of courseIds) {
+                await getRepository(LecturerCourse).save({ lecturerId: editedEntry.id, courseId: courseId });
+            }
+
+        } catch (e) {
             throw {
                 status: false,
                 type: "server",
                 msg: "Server Error!. Please check logs."
             }
-        });
+        }
 
         return {
             status: true,
