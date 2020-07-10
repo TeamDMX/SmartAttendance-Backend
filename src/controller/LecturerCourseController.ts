@@ -44,6 +44,65 @@ export class LecturerCourseController {
         }
     }
 
+    static async getLecture(lecturerId: number, lectureId: number, courseId: number, session) {
+        // check if loggen in user is the same lecturer as the request
+        if (session.data.lecturerId != lecturerId) {
+            throw {
+                status: false,
+                type: "perm",
+                msg: "You don't have permission to perform this action!"
+            }
+        }
+
+        await ValidationUtil.validate("LECTURE", { id: lectureId });
+        await ValidationUtil.validate("LECTURER", { id: lecturerId });
+
+
+        // check if lecturer has access to this course
+        const course = await getRepository(LecturerCourse).findOne({
+            where: { lecturerId: lecturerId, courseId: courseId }
+        }).catch(e => {
+            console.log(e.code, e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            };
+        });
+
+        if (!course) {
+            throw {
+                status: false,
+                type: "perm",
+                msg: "You don't have permission to perform this action!"
+            }
+        }
+
+        const entry = await getRepository(Lecture).findOne({
+            where: { lecturerId: lecturerId, id: lectureId },
+        }).catch(e => {
+            console.log(e.code, e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            };
+        });
+
+        if (entry !== undefined) {
+            return {
+                status: true,
+                data: entry
+            };
+        } else {
+            throw {
+                status: false,
+                type: "input",
+                msg: "Unable to find any entries for this lecturer."
+            };
+        }
+    }
+
     static async getLectures(lecturerId: number, courseId: number, keyword: String, skip: number, session) {
 
         await ValidationUtil.validate("COURSE", { id: courseId });
@@ -246,9 +305,10 @@ export class LecturerCourseController {
     static async deleteLecture(lecturerId: number, lectureId: number, session) {
         // check if valid data is given
         await ValidationUtil.validate("LECTURE", { id: lectureId });
+        await ValidationUtil.validate("LECTURER", { id: lecturerId });
 
         // find the entry with the given id
-        const entry = await getRepository(Lecture).findOne({ id: lectureId }).catch(e => {
+        const entry = await getRepository(Lecture).findOne({ id: lectureId, lecturerId: lecturerId }).catch(e => {
             console.log(e.code, e);
             throw {
                 status: false,
