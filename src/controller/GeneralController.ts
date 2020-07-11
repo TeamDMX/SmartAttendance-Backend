@@ -3,7 +3,7 @@ import { getRepository } from "typeorm";
 export class GeneralController {
     static async get(tableName: string) {
 
-        const generalTables = ["user_type", "role", "course"];
+        const generalTables = ["user_type", "role", "course", "lecture_hall", "lecture_status"];
 
         // check if table name is given
         if (!tableName) {
