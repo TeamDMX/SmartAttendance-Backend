@@ -2,7 +2,11 @@ import { getRepository } from "typeorm";
 import { User } from "../entity/User";
 
 export class UserDao {
-    static search(keyword: String, skip: number) {
+    static search(keyword: String, skip: number) {        
+        
+        if (keyword.trim() == "") {
+            keyword = ""
+        }
         return getRepository(User)
             .createQueryBuilder("u")
             .select([
