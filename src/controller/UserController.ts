@@ -169,7 +169,7 @@ export class UserController {
         const editedEntry = data as User;
 
         // check if an entry is present with the given id
-        const selectedEntry = await getRepository(UserDao).findOne(editedEntry.id).catch(e => {
+        const selectedEntry = await getRepository(User).findOne(editedEntry.id).catch(e => {
             console.log(e.code, e);
             throw {
                 status: false,
@@ -227,7 +227,7 @@ export class UserController {
         editedEntry.password = crypto.createHash("sha512").update(editedEntry.password).digest("hex");
 
         // update entry
-        await getRepository(UserDao).save(editedEntry).catch(e => {
+        await getRepository(User).save(editedEntry).catch(e => {
             console.log(e.code, e);
             throw {
                 status: false,
