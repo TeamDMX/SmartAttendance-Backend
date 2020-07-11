@@ -10,7 +10,7 @@
     "error": "Please provide a valid code!."
   },
   {
-    "regex": "/^[\\w\\s\\-\\/]{5,100}$/",
+    "regex": "/^[\\w\\s\\.]{5,150}$/",
     "attribute": "name",
     "error": "Please provide a valid name!."
   },
