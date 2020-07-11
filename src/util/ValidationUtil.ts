@@ -36,13 +36,25 @@ export class ValidationUtil {
 
             // if not, test values with regexes
             const regex = new RegExp(validationInfoObj[attribute].regex);
+            const regexAlt = validationInfoObj[attribute].regexAlt ? new RegExp(validationInfoObj[attribute].regexAlt) : undefined;
 
+            
             // if input data value is invalid, throw an error
             if (!regex.test(dataValue)) {
-                throw {
-                    status: false,
-                    type: "input",
-                    msg: `Invalid data provided for ${attribute}!. Pelase provide valid data.`
+                if (regexAlt) {
+                    if (!regex.test(dataValue)) {
+                        throw {
+                            status: false,
+                            type: "input",
+                            msg: `Invalid data provided for ${attribute}!. Pelase provide valid data.`
+                        }
+                    }
+                } else {
+                    throw {
+                        status: false,
+                        type: "input",
+                        msg: `Invalid data provided for ${attribute}!. Pelase provide valid data.`
+                    }     
                 }
             }
         });
