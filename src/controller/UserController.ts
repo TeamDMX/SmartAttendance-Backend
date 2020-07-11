@@ -54,7 +54,7 @@ export class UserController {
         await ValidationUtil.validate("USER", data);
 
         // check if both lecCode and Student Reg number are provided
-        if (data.lecCode != null && data.stuRegNumber != null) {
+        if (data.lecCode != "null" && data.stuRegNumber != "null") {
             throw {
                 status: false,
                 type: "input",
@@ -102,7 +102,7 @@ export class UserController {
 
         // hash passwrod
         entry.password = crypto.createHash("sha512").update(entry.password).digest("hex");
-
+        
         const newUser = await getRepository(User).save(entry).catch(e => {
             console.log(e.code, e);
 
@@ -158,7 +158,7 @@ export class UserController {
 
 
         // check if both lecCode and Student Reg number are provided
-        if (data.lecCode != null && data.stuRegNumber != null) {
+        if (data.lecCode != "null" && data.stuRegNumber != "null") {
             throw {
                 status: false,
                 type: "input",
