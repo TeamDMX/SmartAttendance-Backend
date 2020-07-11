@@ -2,6 +2,8 @@ require("dotenv").config();
 
 import { getRepository } from "typeorm";
 import { User } from "../entity/User";
+import { Student } from "../entity/Student";
+import { Lecturer } from "../entity/Lecturer";
 import { UserRole } from "../entity/UserRole";
 import { UserDao } from "../dao/UserDao";
 import { ValidationUtil } from "../util/ValidationUtil";
@@ -48,11 +50,55 @@ export class UserController {
     }
 
     static async save(data) {
-        // create entry object
+        // check if valid data is given
+        await ValidationUtil.validate("USER", data);
+
+        // check if both lecCode and Student Reg number are provided
+        if (data.lecCode != null && data.stuRegNumber != null) {
+            throw {
+                status: false,
+                type: "input",
+                msg: "Invalid user type info!."
+            }
+        }
+
         const entry = data as User;
 
-        // check if valid data is given
-        await ValidationUtil.validate("USER", entry);
+        // find student / lecturer
+        let lecturer = undefined, student = undefined;
+        try {
+            if (data.lecCode != null) {
+                lecturer = await getRepository(Lecturer).findOne({ where: { code: data.lecCode } });
+                if (!lecturer) {
+                    throw {
+                        status: false,
+                        type: "input",
+                        msg: "Lecturer with that code doesn't exist."
+                    }
+                }
+                entry.lecturerId = lecturer.id;
+
+            } else if (data.stuRegNumber != null) {
+                student = await getRepository(Student).findOne({ where: { regNumber: data.stuRegNumber } });
+                if (!student) {
+                    throw {
+                        status: false,
+                        type: "input",
+                        msg: "Student with that registration number doesn't exist."
+                    }
+                }
+
+                entry.studentId = student.id;
+            }
+
+        } catch (e) {
+            if (e.status) throw e;
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            }
+        }
 
         // hash passwrod
         entry.password = crypto.createHash("sha512").update(entry.password).digest("hex");
@@ -74,26 +120,28 @@ export class UserController {
             }
         });
 
-		// set roles for new user
-		const userRoles = data.roleIds.map(rid => {
-			return { userId: newUser.id, roleId: rid }
-		});
+        // set roles for new user
+        const roleIds = data.roleIds.split(",");
+        
+        const userRoles = roleIds.map(rid => {
+            return { userId: newUser.id, roleId: rid }
+        });
 
-		await getRepository(UserRole).save(userRoles).catch(e => {
-			console.log(e.code, e);
-			if (e.code == "ER_DUP_ENTRY") {
-				throw {
-					status: false,
-					type: "input",
-					msg: "User roles already exists!."
-				}
-			}
-			throw {
-				status: false,
-				type: "server",
-				msg: "Server Error!. Please check logs. (Role adding)"
-			}
-		});
+        await getRepository(UserRole).save(userRoles).catch(e => {
+            console.log(e.code, e);
+            if (e.code == "ER_DUP_ENTRY") {
+                throw {
+                    status: false,
+                    type: "input",
+                    msg: "User roles already exists!."
+                }
+            }
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs. (Role adding)"
+            }
+        });
 
         return {
             status: true,
@@ -103,11 +151,22 @@ export class UserController {
 
     static async update(userId: number, data) {
         // create entry object
-        const editedEntry = data as User;
-        editedEntry.id = userId;
+        data.id = userId;
 
         // check if valid data is given
-        await ValidationUtil.validate("USER", editedEntry);
+        await ValidationUtil.validate("USER", data);
+
+
+        // check if both lecCode and Student Reg number are provided
+        if (data.lecCode != null && data.stuRegNumber != null) {
+            throw {
+                status: false,
+                type: "input",
+                msg: "Invalid user type info!."
+            }
+        }
+
+        const editedEntry = data as User;
 
         // check if an entry is present with the given id
         const selectedEntry = await getRepository(UserDao).findOne(editedEntry.id).catch(e => {
@@ -127,6 +186,46 @@ export class UserController {
             }
         }
 
+
+        // find student / lecturer
+        let lecturer = undefined, student = undefined;
+        try {
+            if (data.lecCode != null) {
+                lecturer = await getRepository(Lecturer).findOne({ where: { code: data.lecCode } });
+                if (!lecturer) {
+                    throw {
+                        status: false,
+                        type: "input",
+                        msg: "Lecturer with that code doesn't exist."
+                    }
+                }
+                editedEntry.lecturerId = lecturer.id;
+
+            } else if (data.stuRegNumber != null) {
+                student = await getRepository(Student).findOne({ where: { regNumber: data.stuRegNumber } });
+                if (!student) {
+                    throw {
+                        status: false,
+                        type: "input",
+                        msg: "Student with that registration number doesn't exist."
+                    }
+                }
+
+                editedEntry.studentId = student.id;
+            }
+
+        } catch (e) {
+            if (e.status) throw e;
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            }
+        }
+
+        // hash passwrod
+        editedEntry.password = crypto.createHash("sha512").update(editedEntry.password).digest("hex");
+
         // update entry
         await getRepository(UserDao).save(editedEntry).catch(e => {
             console.log(e.code, e);
@@ -134,6 +233,31 @@ export class UserController {
                 status: false,
                 type: "server",
                 msg: "Server Error!. Please check logs."
+            }
+        });
+
+        // delete exisitng user roles
+        await getRepository(UserRole).delete({ userId: editedEntry.id });
+
+        // update roles
+        const roleIds = data.roleIds.split(",");
+        const userRoles = roleIds.map(rid => {
+            return { userId: editedEntry.id, roleId: rid }
+        });
+
+        await getRepository(UserRole).save(userRoles).catch(e => {
+            console.log(e.code, e);
+            if (e.code == "ER_DUP_ENTRY") {
+                throw {
+                    status: false,
+                    type: "input",
+                    msg: "User roles already exists!."
+                }
+            }
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs. (Role adding)"
             }
         });
 
