@@ -15,23 +15,18 @@
     "error": "Please provide a valid password!."
   },
   {
-    "regex": "/^[\\d,]+$/",
-    "attribute": "roleId",
-    "error": "Please provide a valid role!."
+    "regex": "/^[1-8](,[1-8])*$/",
+    "attribute": "roleIds",
+    "error": "Please provide valid roles!."
   },
   {
-    "regex": "/^[\\d,]+$/",
-    "attribute": "userTypeId",
-    "error": "Please provide a valid user type!."
+    "regex": "/(^[\\w\\s\\-\\/]{5}$)|(^null$)/",
+    "attribute": "lecCode",
+    "error": "Please provide a valid lecturer code!."
   },
   {
-    "regex": "/^[\\d]+$/",
-    "attribute": "studentId",
-    "error": "Please provide a valid student!."
-  },
-  {
-    "regex": "/^[\\d]+$/",
-    "attribute": "lecturerId",
-    "error": "Please provide a valid lecturer!."
+    "regex": "/(^[A-Z]{2}[\\d]{5}$)|(^null$)/",
+    "attribute": "stuRegNumber",
+    "error": "Please provide a valid student registration number!."
   }
 ]
