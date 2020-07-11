@@ -177,7 +177,7 @@ export class LecturerCourseController {
         const entry = data as Lecture;
 
         // check if valid data is given
-        await ValidationUtil.validate("LECTURE", entry);
+        await ValidationUtil.validate("LECTURER_COURSE", entry);
 
 
         // check if loggen in user is the same lecturer as the request
@@ -188,6 +188,9 @@ export class LecturerCourseController {
                 msg: "You don't have permission to perform this action!"
             }
         }
+
+        // add lecturer id to entry
+        entry.lecturerId = lecturerId;
 
         // check if lecturer has access to this course
         const course = await getRepository(LecturerCourse).findOne({
@@ -237,9 +240,9 @@ export class LecturerCourseController {
         const editedEntry = data as Lecture;
 
         // check if valid data is given
-        await ValidationUtil.validate("LECTURE", editedEntry);
+        await ValidationUtil.validate("LECTURER_COURSE", editedEntry);
 
-        // check if loggen in user is the same lecturer as the request
+        // check if loggen in user is the same lecturer as the request        
         if (session.data.lecturerId != lecturerId) {
             throw {
                 status: false,
