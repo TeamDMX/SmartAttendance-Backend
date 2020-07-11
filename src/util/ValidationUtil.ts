@@ -41,6 +41,7 @@ export class ValidationUtil {
             
             // if input data value is invalid, throw an error
             if (!regex.test(dataValue)) {
+                console.log(regex, dataValue);
                 if (regexAlt) {
                     if (!regex.test(dataValue)) {
                         throw {
@@ -49,13 +50,13 @@ export class ValidationUtil {
                             msg: `Invalid data provided for ${attribute}!. Pelase provide valid data.`
                         }
                     }
-                } else {
-                    throw {
-                        status: false,
-                        type: "input",
-                        msg: `Invalid data provided for ${attribute}!. Pelase provide valid data.`
-                    }     
                 }
+
+                throw {
+                    status: false,
+                    type: "input",
+                    msg: `Invalid data provided for ${attribute}!. Pelase provide valid data.`
+                }  
             }
         });
     }
