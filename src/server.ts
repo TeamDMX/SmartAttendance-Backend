@@ -253,7 +253,7 @@ app.route("/api/lecturers/:lecturerId")
 
 
 
-// Routes:  Lecturer Materials
+// Routes:  Lecturer Materials / Courses
 app.route("/api/lecturers/:lecturerId/courses")
    .get((req, res) => {
       LecturerCourseController.getCourses(parseInt(req.params.lecturerId), req.session)
@@ -291,6 +291,14 @@ app.route("/api/lecturers/:lecturerId/lectures/:lectureId")
 
    .delete((req, res) => {
       LecturerCourseController.deleteLecture(parseInt(req.params.lecturerId), parseInt(req.params.lectureId), req.session)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
+// check if lecture is eligible to mark attendance
+app.route("/api/lecturers/:lecturerId/lectures/:lectureId/check")
+   .get((req, res) => {
+      LecturerCourseController.checkLectureMarkingEligibility(parseInt(req.params.lecturerId), parseInt(req.params.lectureId), req.session)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
@@ -364,14 +372,6 @@ app.route("/api/lectures/:lectureId")
          .catch(e => res.json(e));
    });
 
-// // Routes: Lecture Eligibility check for start making attendace 
-// app.route("/api/lecture/check")
-//    .get((req, res) => {
-//       LecturerCourseController.checkLectureMarkingEligibility(req.query.data, req.session)
-//          .then(r => res.json(r))
-//          .catch(e => res.json(e));
-//    })
-
 // Routes:  Lecture Halls
 app.route("/api/lecture_halls/search/:keyword/skip/:skip")
    .get((req, res) => {
@@ -434,7 +434,7 @@ app.route("/api/general/:tableName")
 
 
 // Socket.IO: namespace for attendance marking view
-const attendanceNamespace = io.of("/api/attendance");
+const attendanceNamespace = io.of("/api/mark_attendance");
 
 attendanceNamespace.on("connection", (socket) => {
    const lectureId = socket.handshake.query.lecture_id;
