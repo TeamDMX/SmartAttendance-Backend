@@ -105,7 +105,6 @@ if (process.env.PRODUCTION == "false") {
    // dummy session data
    app.use((req, res, next) => {
       req.session.data = {
-         username: "admin",
          logged: true,
          userRoles: [{ id: 1 }],
          userId: 1,
