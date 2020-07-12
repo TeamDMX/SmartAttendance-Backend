@@ -286,10 +286,7 @@ export class AttendanceController {
             };
         }
 
-        // cancel attendances
-        const socketId = this.ongoingMarkings[lectureId].socketId;
-        const currentClient = this.ongoingMarkings[lectureId].attendanceNamespace.connected[socketId];
-        currentClient.disconnect();
+        this.removeOngoingMarking(lectureId);
 
         // delete existing markings
         await getRepository(Attendance).delete({ lectureId: lectureId }).catch(e => {
@@ -361,10 +358,7 @@ export class AttendanceController {
         }
 
         // cancel attendances
-        const socketId = this.ongoingMarkings[lectureId].socketId;
-        const currentClient = this.ongoingMarkings[lectureId].attendanceNamespace.connected[socketId];
-        currentClient.disconnect();
-
+        this.removeOngoingMarking(lectureId);
 
         // update lecture from active to finished
         lecture.lectureStatusId = 3;
@@ -382,5 +376,13 @@ export class AttendanceController {
             status: true,
             msg: "Lecture marking has been finished!"
         }
+    }
+
+    private static removeOngoingMarking(lectureId: number) {
+        const socketId = this.ongoingMarkings[lectureId].socketId;
+        const currentClient = this.ongoingMarkings[lectureId].attendanceNamespace.connected[socketId];
+        currentClient.disconnect();
+        clearInterval(this.ongoingMarkings[lectureId].interval);
+        delete this.ongoingMarkings[lectureId];
     }
 }
