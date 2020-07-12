@@ -44,7 +44,7 @@ export class LecturerCourseController {
         }
     }
 
-    static async getLecture(lecturerId: number, lectureId: number, courseId: number, session) {
+    static async getLecture(lecturerId: number, lectureId: number, session) {
         // check if loggen in user is the same lecturer as the request
         if (session.data.lecturerId != lecturerId) {
             throw {
@@ -57,29 +57,9 @@ export class LecturerCourseController {
         await ValidationUtil.validate("LECTURE", { id: lectureId });
         await ValidationUtil.validate("LECTURER", { id: lecturerId });
 
-
-        // check if lecturer has access to this course
-        const course = await getRepository(LecturerCourse).findOne({
-            where: { lecturerId: lecturerId, courseId: courseId }
-        }).catch(e => {
-            console.log(e.code, e);
-            throw {
-                status: false,
-                type: "server",
-                msg: "Server Error!. Please check logs."
-            };
-        });
-
-        if (!course) {
-            throw {
-                status: false,
-                type: "perm",
-                msg: "You don't have permission to perform this action!"
-            }
-        }
-
         const entry = await getRepository(Lecture).findOne({
             where: { lecturerId: lecturerId, id: lectureId },
+            relations: ["course"]
         }).catch(e => {
             console.log(e.code, e);
             throw {

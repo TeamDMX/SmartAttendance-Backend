@@ -268,9 +268,9 @@ app.route("/api/lecturers/:lecturerId/courses/:courseId/lectures/search/:keyword
          .catch(e => res.json(e));
    });
 
-app.route("/api/lecturers/:lecturerId/courses/:courseId/lectures/:lectureId")
+app.route("/api/lecturers/:lecturerId/lectures/:lectureId")
    .get((req, res) => {
-      LecturerCourseController.getLecture(parseInt(req.params.lecturerId), parseInt(req.params.lectureId), parseInt(req.params.courseId), req.session)
+      LecturerCourseController.getLecture(parseInt(req.params.lecturerId), parseInt(req.params.lectureId), req.session)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
