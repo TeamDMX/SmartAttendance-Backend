@@ -125,20 +125,22 @@ export class AttendanceController {
         }
 
         // if this request is from a student
-        if (lecturerId == undefined) {
-            if (session.data.userId !== studentId) {
-                throw {
-                    status: false,
-                    type: "perm",
-                    msg: "You don't have permission to mark someone else!."
-                };
-            }
-        } else {
-            if (lecturerId !== session.data.userId) {
-                throw {
-                    status: false,
-                    type: "perm",
-                    msg: "You don't have permission to perform this action!"
+        if (process.env.PRODUCTION == "true") {
+            if (lecturerId == undefined) {
+                if (session.data.studentId !== studentId) {
+                    throw {
+                        status: false,
+                        type: "perm",
+                        msg: "You don't have permission to mark someone else!."
+                    };
+                }
+            } else {
+                if (lecturerId !== session.data.lecturerId) {
+                    throw {
+                        status: false,
+                        type: "perm",
+                        msg: "You don't have permission to perform this action!"
+                    }
                 }
             }
         }
