@@ -18,9 +18,9 @@ export class AuthController {
 
         user = await getRepository(User).findOne({
             where: {
-                username: username
+                email: username
             },
-            relations: ["userRoles"]
+            relations: ["userRoles", "student", "lecturer"]
         }).catch(e => {
             console.log(e.code, e);
             throw {
@@ -29,6 +29,7 @@ export class AuthController {
                 msg: "Server Error!. Please check console logs."
             }
         });
+        
 
         // if user is not found
         if (user == undefined) {
@@ -38,7 +39,7 @@ export class AuthController {
                 msg: "Unable to find a user with that username!"
             };
         }
-
+        
         // check password
         if (user.password !== hashedPass) {
             throw {
@@ -49,12 +50,14 @@ export class AuthController {
         }
 
         // create session
-        session.data = {};
-        session.data.username = username;
-        session.data.logged = true;
-        session.data.userRoles = user.userRoles;
-        session.data.userId = user.id;
-        
+        session.data = {
+            logged: true,
+            userRoles: user.userRoles,
+            userId: user.id,
+            lecturerId: user.lecturerId,
+            studentId: user.studentId,
+        };
+
         // return login success msg and user role name
         return {
             status: true,
