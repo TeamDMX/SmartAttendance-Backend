@@ -8,9 +8,9 @@ export class LecturerCourseController {
 
         await ValidationUtil.validate("LECTURER", { id: lecturerId });
 
-        // check if session lecturer is the same        
-        if (lecturerId != session.data.lecturerId) {
 
+        // check if session lecturer is the same        
+        if (session.data == undefined || lecturerId != session.data.lecturerId) {
             throw {
                 status: false,
                 type: "perm",
@@ -46,7 +46,7 @@ export class LecturerCourseController {
 
     static async getLecture(lecturerId: number, lectureId: number, session) {
         // check if loggen in user is the same lecturer as the request
-        if (session.data.lecturerId != lecturerId) {
+        if (session.data == undefined || lecturerId != session.data.lecturerId) {
             throw {
                 status: false,
                 type: "perm",
@@ -88,7 +88,7 @@ export class LecturerCourseController {
         await ValidationUtil.validate("COURSE", { id: courseId });
 
         // check if loggen in user is the same lecturer as the request
-        if (session.data.lecturerId != lecturerId) {
+        if (session.data == undefined || lecturerId != session.data.lecturerId) {
             throw {
                 status: false,
                 type: "perm",
@@ -161,7 +161,7 @@ export class LecturerCourseController {
 
 
         // check if loggen in user is the same lecturer as the request
-        if (session.data.lecturerId != lecturerId) {
+        if (session.data == undefined || lecturerId != session.data.lecturerId) {
             throw {
                 status: false,
                 type: "perm",
@@ -223,7 +223,7 @@ export class LecturerCourseController {
         await ValidationUtil.validate("LECTURER_COURSE", editedEntry);
 
         // check if loggen in user is the same lecturer as the request        
-        if (session.data.lecturerId != lecturerId) {
+        if (session.data == undefined || lecturerId != session.data.lecturerId) {
             throw {
                 status: false,
                 type: "perm",
@@ -301,7 +301,7 @@ export class LecturerCourseController {
         });
 
         // check if loggen in user is the same lecturer as the request
-        if (session.data.lecturerId != lecturerId) {
+        if (session.data == undefined || lecturerId != session.data.lecturerId) {
             throw {
                 status: false,
                 type: "perm",
@@ -378,7 +378,7 @@ export class LecturerCourseController {
         }
 
         // check if loggen in user is the same lecturer as the request
-        if (session.data.lecturerId != lecturerId) {
+        if (session.data == undefined || lecturerId != session.data.lecturerId) {
             throw {
                 status: false,
                 type: "perm",
