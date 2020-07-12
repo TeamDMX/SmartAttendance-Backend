@@ -13,7 +13,7 @@ export class AttendanceController {
     // store ongoing attenace markings
     static ongoingMarkings = {
 
-    }
+    } as any;
 
     static async startMarking(lectureId, socketId, attendanceNamespace) {
 
@@ -244,5 +244,143 @@ export class AttendanceController {
             student: student,
             markedDatetime: newEntry.markedDatetime
         }));
+    }
+
+    static async cancelMarking(lecturerId: number, lectureId: number, session) {
+
+        // verify lecturer
+        if (lecturerId != session.data.lecturerId) {
+            throw {
+                status: false,
+                type: "perm",
+                msg: "You don't have permission to perform this action!"
+            }
+        }
+
+        // check if there is an ongoing session for this lecture
+        if (!this.ongoingMarkings[lectureId]) {
+            throw {
+                status: false,
+                type: "input",
+                msg: "There is no ongoing marking session for this lecture!"
+            }
+        }
+
+        // find lecture
+        const lecture = await getRepository(Lecture).findOne({
+            where: { id: lectureId }
+        }).catch(e => {
+            console.log(e.code, e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            };
+        });
+
+        if (lecture.lectureStatusId !== 2) {
+            throw {
+                status: false,
+                type: "input",
+                msg: "This lecture isn't active!."
+            };
+        }
+
+        // cancel attendances
+        const socketId = this.ongoingMarkings[lectureId].socketId;
+        const currentClient = this.ongoingMarkings[lectureId].attendanceNamespace.connected[socketId];
+        currentClient.disconnect();
+
+        // delete existing markings
+        await getRepository(Attendance).delete({ lectureId: lectureId }).catch(e => {
+            console.log(e.code, e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            };
+        });
+
+        // update lecture from active to pending
+        lecture.lectureStatusId = 1;
+
+        await getRepository(Lecture).save(lecture).catch(e => {
+            console.log(e.code, e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            };
+        });
+
+
+        return {
+            status: true,
+            msg: "Lecture marking has been cancelled!"
+        }
+
+    }
+
+    static async finishMarking(lecturerId: number, lectureId: number, session) {
+        // verify lecturer
+        if (lecturerId != session.data.lecturerId) {
+            throw {
+                status: false,
+                type: "perm",
+                msg: "You don't have permission to perform this action!"
+            }
+        }
+
+        // check if there is an ongoing session for this lecture
+        if (!this.ongoingMarkings[lectureId]) {
+            throw {
+                status: false,
+                type: "input",
+                msg: "There is no ongoing marking session for this lecture!"
+            }
+        }
+
+        // find lecture
+        const lecture = await getRepository(Lecture).findOne({
+            where: { id: lectureId }
+        }).catch(e => {
+            console.log(e.code, e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            };
+        });
+
+        if (lecture.lectureStatusId !== 2) {
+            throw {
+                status: false,
+                type: "input",
+                msg: "This lecture isn't active!."
+            };
+        }
+
+        // cancel attendances
+        const socketId = this.ongoingMarkings[lectureId].socketId;
+        const currentClient = this.ongoingMarkings[lectureId].attendanceNamespace.connected[socketId];
+        currentClient.disconnect();
+
+
+        // update lecture from active to finished
+        lecture.lectureStatusId = 3;
+
+        await getRepository(Lecture).save(lecture).catch(e => {
+            console.log(e.code, e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            };
+        });
+
+        return {
+            status: true,
+            msg: "Lecture marking has been finished!"
+        }
     }
 }

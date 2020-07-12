@@ -433,6 +433,24 @@ app.route("/api/general/:tableName")
    });
 
 
+// cancel and finish marking
+app.route("/api/lecturers/:lecturerId/lectures/:lectureId/attendances/cancel")
+   .get((req, res) => {
+      AttendanceController.cancelMarking(req.params.lecturerId, req.params.lectureId, req.session)
+         .then(r => res.json(r))
+         .catch(e => {
+            console.log(e);
+            res.json(e);
+         });
+   });
+
+app.route("/api/lecturers/:lecturerId/lectures/:lectureId/attendances/finish")
+   .get((req, res) => {
+      AttendanceController.finishMarking(req.params.lecturerId, req.params.lectureId, req.session)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
 // Socket.IO: namespace for attendance marking view
 const attendanceNamespace = io.of("/api/mark_attendance");
 
@@ -443,12 +461,6 @@ attendanceNamespace.on("connection", (socket) => {
    AttendanceController.startMarking(lectureId, socketId, attendanceNamespace).catch(e => {
       console.log(e);
    });
-
-   // attendanceNamespace.to(socketId).emit("qrcode", Math.floor((Math.random() * 1000) + 1));
-   // setInterval(() => {
-   //    attendanceNamespace.to(socketId).emit("qrcode", Math.floor((Math.random() * 1000) + 1));
-   //    console.log("data send");
-   // }, 5000);
 });
 
 // Express.js: Start the server
