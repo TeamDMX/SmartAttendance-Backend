@@ -35,6 +35,7 @@ import { RegexPatternUtil } from "./util/RegexPatternUtil"
 import { AuthController } from "./controller/AuthController"
 import { LecturerCourseController } from "./controller/LecturerCourseController"
 import { ProfileController } from "./controller/ProfileController"
+import { PrivilegeController } from "./controller/PrivilegeController"
 
 /* 
 =====================================================================================
@@ -333,6 +334,20 @@ app.route("/api/users/:userId")
 
    .put((req, res) => {
       UserController.update(parseInt(req.params.userId), req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
+// Routes: Role privileges
+app.route("/api/roles/:roleId/privileges")
+   .get((req, res) => {
+      PrivilegeController.getOne(parseInt(req.params.roleId))
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   })
+
+   .put((req, res) => {
+      PrivilegeController.update(parseInt(req.params.roleId), req.body.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
