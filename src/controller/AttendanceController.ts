@@ -385,4 +385,50 @@ export class AttendanceController {
         clearInterval(this.ongoingMarkings[lectureId].interval);
         delete this.ongoingMarkings[lectureId];
     }
+
+    static async getStudentAttendance(regNumber: string, courseId: number) {
+        // validate data
+        await ValidationUtil.validate("STUDENT", { regNumber: regNumber });
+        await ValidationUtil.validate("COURSE", { id: courseId });
+
+        // get student attendnace by given regNumber
+        const attendances = await getRepository(Attendance).findAndCount({
+            where: { student: { regNumber: regNumber }, lecture: { courseId: courseId } }
+        }).catch(e => {
+            console.log(e.code, e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            };
+        });
+
+        // find total lectures for given course
+        const courseLectures = await getRepository(Lecture).findAndCount({
+            courseId: courseId
+        }).catch(e => {
+            console.log(e.code, e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            };
+        });
+
+
+        const lectureCount = courseLectures[1];
+        const attendanceCount = attendances[1];
+
+        const attendancePercentage = (lectureCount / attendanceCount) * 100;
+
+        return {
+            status: true,
+            data: {
+                percentage: attendancePercentage,
+                attendances: attendances[0],
+                totalLectures: lectureCount
+            }
+        }
+
+    }
 }
