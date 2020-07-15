@@ -206,4 +206,26 @@ export class StudentController {
             msg: "That entry has been deleted!"
         };
     }
+
+    static async getStudentCourses(regNumber: number) {
+        await ValidationUtil.validate("STUDENT", { regNumber: regNumber });
+
+        const studentCourses = await getRepository(StudentCourse).find({
+            where: { student: { regNumber: regNumber } },
+            relations: ["course"]
+        }).catch(e => {
+            console.log(e.code, e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            }
+        });
+
+
+        return {
+            status: true,
+            data: studentCourses
+        }
+    }
 }
