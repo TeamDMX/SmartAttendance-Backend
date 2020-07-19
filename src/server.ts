@@ -422,14 +422,6 @@ app.route("/api/lecture_halls/:lectureHallId")
    });
 
 
-// Routes: Attendance
-app.route("/api/attendances")
-   .post((req, res) => {
-      AttendanceController.markAttendance(req.session, req.body.data)
-         .then(r => res.json(r))
-         .catch(e => res.json(e));
-   });
-
 // Routes: Regexes
 app.route("/api/regexes/:moduleName")
    .get((req, res) => {
@@ -444,6 +436,26 @@ app.route("/api/general/:tableName")
       GeneralController.get(req.params.tableName)
          .then(r => res.json(r))
          .catch(e => res.json(e));
+   });
+
+
+// Routes: Attendance
+app.route("/api/attendances")
+   .post((req, res) => {
+      AttendanceController.markAttendance(req.session, req.body.data)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
+// student attendances
+app.route("/api/students/:regNumber/courses/:courseId/attendances")
+   .get((req, res) => {
+      AttendanceController.getStudentAttendance(req.params.regNumber, req.params.courseId)
+         .then(r => res.json(r))
+         .catch(e => {
+            console.log(e);
+            
+         });
    });
 
 
