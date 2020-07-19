@@ -6,8 +6,10 @@ import { Lecture } from "../entity/Lecture";
 import { StudentCourse } from "../entity/StudentCourse";
 import { Student } from "../entity/Student";
 import { ValidationUtil } from "../util/ValidationUtil";
+import { AttendanceDao } from "../dao/AttendanceDao";
 
 import * as crypto from "crypto";
+import { log } from "console";
 
 export class AttendanceController {
     // store ongoing attenace markings
@@ -391,10 +393,9 @@ export class AttendanceController {
         await ValidationUtil.validate("STUDENT", { regNumber: regNumber });
         await ValidationUtil.validate("COURSE", { id: courseId });
 
+
         // get student attendnace by given regNumber
-        const attendances = await getRepository(Attendance).findAndCount({
-            where: { student: { regNumber: regNumber }, lecture: { courseId: courseId } }
-        }).catch(e => {
+        const attendances = await AttendanceDao.getAttendances(regNumber, courseId).catch(e => {
             console.log(e.code, e);
             throw {
                 status: false,
@@ -402,7 +403,7 @@ export class AttendanceController {
                 msg: "Server Error!. Please check logs."
             };
         });
-
+        
         // find total lectures for given course
         const courseLectures = await getRepository(Lecture).findAndCount({
             courseId: courseId
@@ -419,7 +420,7 @@ export class AttendanceController {
         const lectureCount = courseLectures[1];
         const attendanceCount = attendances[1];
 
-        const attendancePercentage = (lectureCount / attendanceCount) * 100;
+        const attendancePercentage = (attendanceCount / lectureCount) * 100;
 
         return {
             status: true,
