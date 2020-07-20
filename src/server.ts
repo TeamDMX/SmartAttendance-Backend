@@ -452,10 +452,7 @@ app.route("/api/students/:regNumber/courses/:courseId/attendances")
    .get((req, res) => {
       AttendanceController.getStudentAttendance(req.params.regNumber, req.params.courseId)
          .then(r => res.json(r))
-         .catch(e => {
-            console.log(e);
-            
-         });
+         .catch(e => res.json(e));
    });
 
 

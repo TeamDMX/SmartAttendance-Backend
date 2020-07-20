@@ -394,6 +394,27 @@ export class AttendanceController {
         await ValidationUtil.validate("COURSE", { id: courseId });
 
 
+        // check if student exists with given regNumber
+        const student = await getRepository(Student).findOne({
+            regNumber: regNumber
+        }).catch(e => {
+            console.log(e.code, e);
+            throw {
+                status: false,
+                type: "server",
+                msg: "Server Error!. Please check logs."
+            };
+        });
+
+
+        if (!student) {
+            throw {
+                status: false,
+                type: "input",
+                msg: "There is no student with that registration number!."
+            };
+        }
+
         // get student attendnace by given regNumber
         const attendances = await AttendanceDao.getAttendances(regNumber, courseId).catch(e => {
             console.log(e.code, e);
