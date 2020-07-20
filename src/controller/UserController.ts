@@ -93,7 +93,7 @@ export class UserController {
 
         } catch (e) {
             console.log(e);
-            if (e.status) throw e;
+            if (e.status == true) throw e;
             throw {
                 status: false,
                 type: "server",
