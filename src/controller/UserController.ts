@@ -67,7 +67,7 @@ export class UserController {
         // find student / lecturer
         let lecturer = undefined, student = undefined;
         try {
-            if (data.lecCode != null) {
+            if (data.lecCode != "null") {
                 lecturer = await getRepository(Lecturer).findOne({ where: { code: data.lecCode } });
                 if (!lecturer) {
                     throw {
@@ -78,7 +78,7 @@ export class UserController {
                 }
                 entry.lecturerId = lecturer.id;
 
-            } else if (data.stuRegNumber != null) {
+            } else if (data.stuRegNumber != "null") {
                 student = await getRepository(Student).findOne({ where: { regNumber: data.stuRegNumber } });
                 if (!student) {
                     throw {
@@ -92,6 +92,7 @@ export class UserController {
             }
 
         } catch (e) {
+            console.log(e);
             if (e.status) throw e;
             throw {
                 status: false,
