@@ -29,7 +29,7 @@ export class AuthController {
                 msg: "Server Error!. Please check console logs."
             }
         });
-        
+
 
         // if user is not found
         if (user == undefined) {
@@ -39,13 +39,22 @@ export class AuthController {
                 msg: "Unable to find a user with that email!"
             };
         }
-        
+
         // check password
         if (user.password !== hashedPass) {
             throw {
                 status: false,
                 type: "input",
                 msg: "Password you provided is wrong!."
+            };
+        }
+
+        // check if this is a student ac and account is reset
+        if (user.student && user.isActive == false) {
+            throw {
+                status: false,
+                type: "inactive",
+                msg: "You need to register first!."
             };
         }
 
@@ -59,10 +68,19 @@ export class AuthController {
         };
 
         // return login success msg and user role name
-        return {
+        let msg = {
             status: true,
+            data: {},
             msg: "You have been logged in!.",
+        };
+
+        if (user.student) {
+            msg.data["student"] = user.student;
+        } else {
+            msg.data["lecturer"] = user.lecturer;
         }
+
+        return msg;
     }
 
     static isLoggedIn(session) {
