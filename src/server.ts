@@ -111,7 +111,7 @@ if (process.env.PRODUCTION == "false") {
          userRoles: [{ id: 1 }],
          userId: 1,
          lecturerId: 1,
-         studentId: undefined
+         studentId: 1
       };
       next();
    });
@@ -224,6 +224,15 @@ app.route("/api/students/:studentId")
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
+
+// student courses
+app.route("/api/students/:studentId/courses")
+   .get((req, res) => {
+      StudentController.getStudentCourses(parseInt(req.params.studentId))
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
 
 // Routes:  Lecturer Routes
 app.route("/api/lecturers/search/:keyword/skip/:skip")
