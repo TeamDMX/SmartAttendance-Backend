@@ -207,11 +207,11 @@ export class StudentController {
         };
     }
 
-    static async getStudentCourses(regNumber: number) {
-        await ValidationUtil.validate("STUDENT", { regNumber: regNumber });
+    static async getStudentCourses(studentId: number) {
+        await ValidationUtil.validate("STUDENT", { id: studentId });
 
         const studentCourses = await getRepository(StudentCourse).find({
-            where: { student: { regNumber: regNumber } },
+            where: { studentId: studentId },
             relations: ["course"]
         }).catch(e => {
             console.log(e.code, e);
@@ -221,7 +221,6 @@ export class StudentController {
                 msg: "Server Error!. Please check logs."
             }
         });
-
 
         return {
             status: true,
