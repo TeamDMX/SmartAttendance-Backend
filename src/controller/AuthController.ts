@@ -8,17 +8,17 @@ import * as crypto from "crypto";
 
 
 export class AuthController {
-    static async logIn(session, { username, password }) {
+    static async logIn(session, { email, password }) {
 
         // create hashed password
         const hashedPass = crypto.createHash("sha512").update(`${password}`).digest("hex");
 
-        // find user with the given username
+        // find user with the given email
         let user;
 
         user = await getRepository(User).findOne({
             where: {
-                email: username
+                email: email
             },
             relations: ["userRoles", "student", "lecturer"]
         }).catch(e => {
@@ -36,7 +36,7 @@ export class AuthController {
             throw {
                 status: false,
                 type: "input",
-                msg: "Unable to find a user with that username!"
+                msg: "Unable to find a user with that email!"
             };
         }
         
