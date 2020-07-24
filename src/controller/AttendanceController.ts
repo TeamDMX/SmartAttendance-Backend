@@ -424,7 +424,7 @@ export class AttendanceController {
                 msg: "Server Error!. Please check logs."
             };
         });
-        
+
         // find total lectures for given course
         const courseLectures = await getRepository(Lecture).findAndCount({
             courseId: courseId
@@ -441,7 +441,7 @@ export class AttendanceController {
         const lectureCount = courseLectures[1];
         const attendanceCount = attendances[1];
 
-        const attendancePercentage = (attendanceCount / lectureCount) * 100;
+        const attendancePercentage = Math.round((attendanceCount / lectureCount) * 100);
 
         return {
             status: true,
