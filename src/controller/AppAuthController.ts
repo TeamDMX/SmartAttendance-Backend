@@ -67,6 +67,6 @@ export class AppAuthController extends AuthController {
         });
 
         // log in
-        return this.logIn(session, { username: user.email, password: data.password });
+        return this.logIn(session, { email: user.email, password: data.password });
     }
 }

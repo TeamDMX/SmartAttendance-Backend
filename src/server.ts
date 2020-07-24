@@ -36,6 +36,7 @@ import { AuthController } from "./controller/AuthController"
 import { LecturerCourseController } from "./controller/LecturerCourseController"
 import { ProfileController } from "./controller/ProfileController"
 import { PrivilegeController } from "./controller/PrivilegeController"
+import { AppAuthController } from "./controller/AppAuthController"
 
 /* 
 =====================================================================================
@@ -136,6 +137,13 @@ app.route("/api/login")
 app.route("/api/logout")
    .get((req, res) => {
       AuthController.logOut(req.session)
+         .then(r => res.json(r))
+         .catch(e => res.json(e));
+   });
+
+app.route("/api/app/register")
+   .post((req, res) => {
+      AppAuthController.registerStudent(req.session, req.body.data)
          .then(r => res.json(r))
          .catch(e => res.json(e));
    });
