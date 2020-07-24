@@ -37,6 +37,9 @@ export class User {
   @Column("int", { name: "lecturer_id", nullable: true })
   lecturerId: number | null;
 
+  @Column("tinyint", { name: "is_active", width: 1, default: () => "'1'" })
+  isActive: boolean;
+
   @ManyToOne(() => Lecturer, (lecturer) => lecturer.users, {
     onDelete: "NO ACTION",
     onUpdate: "NO ACTION",

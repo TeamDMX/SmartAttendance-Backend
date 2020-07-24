@@ -89,6 +89,7 @@ export class UserController {
                 }
 
                 entry.studentId = student.id;
+                entry.isActive = false;
             }
 
         } catch (e) {
@@ -103,7 +104,7 @@ export class UserController {
 
         // hash passwrod
         entry.password = crypto.createHash("sha512").update(entry.password).digest("hex");
-        
+
         const newUser = await getRepository(User).save(entry).catch(e => {
             console.log(e.code, e);
 
@@ -123,7 +124,7 @@ export class UserController {
 
         // set roles for new user
         const roleIds = data.roleIds.split(",");
-        
+
         const userRoles = roleIds.map(rid => {
             return { userId: newUser.id, roleId: rid }
         });
