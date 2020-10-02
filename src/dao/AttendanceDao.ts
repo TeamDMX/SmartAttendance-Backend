@@ -7,6 +7,11 @@ export class AttendanceDao {
         const lectures = await getRepository(Lecture).find({ courseId: courseId });
         const lectureIds = lectures.map(lecture => lecture.id);
 
+        // return empty array when there are no lectures for the given course
+        if (lectureIds.length == 0) {
+            return [];
+        }
+
         const attendances = await getRepository(Attendance)
             .createQueryBuilder("at")
             .leftJoin("at.student", "st")
