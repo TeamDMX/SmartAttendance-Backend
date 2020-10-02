@@ -9,7 +9,6 @@ import { ValidationUtil } from "../util/ValidationUtil";
 import { AttendanceDao } from "../dao/AttendanceDao";
 
 import * as crypto from "crypto";
-import { log } from "console";
 
 export class AttendanceController {
     // store ongoing attenace markings
@@ -129,7 +128,7 @@ export class AttendanceController {
         // if this request is from a student
         if (process.env.PRODUCTION == "true") {
             if (lecturerId == undefined) {
-                if (session.data.studentId !== studentId) {
+                if (session.data.studentId != studentId) {
                     throw {
                         status: false,
                         type: "perm",
@@ -137,7 +136,7 @@ export class AttendanceController {
                     };
                 }
             } else {
-                if (lecturerId !== session.data.lecturerId) {
+                if (lecturerId != session.data.lecturerId) {
                     throw {
                         status: false,
                         type: "perm",
