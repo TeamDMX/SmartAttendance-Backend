@@ -28,5 +28,10 @@
     "regex": "/(^[A-Z]{2}[\\d]{5}$)|(^null$)/",
     "attribute": "stuRegNumber",
     "error": "Please provide a valid student registration number!."
+  },
+  {
+    "regex": "/^[\\d]+$/",
+    "attribute": "isActive",
+    "error": "Please provide a valid student registration number!."
   }
 ]
